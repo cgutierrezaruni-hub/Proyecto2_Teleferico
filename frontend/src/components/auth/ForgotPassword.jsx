@@ -8,7 +8,7 @@ const ForgotPassword = () => {
   const navigate = useNavigate();
   const { forgotPassword, verifyRecovery, resetPassword } = useAuth();
   
-  const [step, setStep] = useState(1); // 1: email, 2: código, 3: nueva contraseña
+  const [step, setStep] = useState(1);
   const [email, setEmail] = useState('');
   const [codigo, setCodigo] = useState('');
   const [nuevaPassword, setNuevaPassword] = useState('');
@@ -119,7 +119,7 @@ const ForgotPassword = () => {
             <form onSubmit={handleVerifyCode}>
               <div className="form-group">
                 <label>Código de verificación</label>
-                <p style={{ fontSize: '14px', color: '#666', marginBottom: '10px' }}>
+                <p className="form-helper-text">
                   Ingresa el código enviado a <strong>{email}</strong>
                 </p>
                 <input
@@ -130,12 +130,7 @@ const ForgotPassword = () => {
                   maxLength="6"
                   required
                   disabled={cargando}
-                  style={{ 
-                    textAlign: 'center',
-                    fontSize: '24px',
-                    letterSpacing: '8px',
-                    fontWeight: 'bold'
-                  }}
+                  className="code-input"
                 />
               </div>
               
@@ -152,7 +147,7 @@ const ForgotPassword = () => {
                 className="auth-button secondary"
                 onClick={() => setStep(1)}
                 disabled={cargando}
-                style={{ marginTop: '10px', background: '#6c757d' }}
+                style={{ marginTop: '10px' }}  // Este sí puede quedar
               >
                 Cambiar email
               </button>

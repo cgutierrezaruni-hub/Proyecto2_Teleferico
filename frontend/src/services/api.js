@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-// URL base CORRECTA
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 // Crear instancia principal de axios
@@ -128,5 +127,42 @@ export const getCurrentUser = async () => {
   }
 };
 
-// Exportar la instancia principal también
+// ====================== FUNCIONES PARA POSTULANTE ======================
+
+export const getPerfilPostulante = async () => {
+  try {
+    const response = await api.get('/postulante/perfil');
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updatePerfilPostulante = async (datosPerfil) => {
+  try {
+    const response = await api.post('/postulante/perfil', datosPerfil);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getEstadoPostulacion = async () => {
+  try {
+    const response = await api.get('/postulante/estado');
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const verificarPerfilCompleto = async () => {
+  try {
+    const response = await api.get('/postulante/verificar-perfil');
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default api;

@@ -112,13 +112,13 @@ const Login = () => {
           <p><strong>Credenciales de prueba:</strong></p>
           <div className="credentials-list">
             <div className="credential-item">
-              <strong>Postulante:</strong> postulante@test.com / 123456
+              <strong>Postulante:</strong> maria.gonzalez@email.com / $2a$10$hash1
             </div>
             <div className="credential-item">
-              <strong>Jefe:</strong> jefe@test.com / 123456
+              <strong>Jefe:</strong> jefe.it@empresa.com / $2a$10$hash8
             </div>
             <div className="credential-item">
-              <strong>RRHH:</strong> rrhh@test.com / 123456
+              <strong>RRHH:</strong> rrhh1@empresa.com / $2a$10$hash6
             </div>
           </div>
         </div>

@@ -25,10 +25,6 @@ router.post('/reset-password', authController.resetPassword);
 // GET /api/auth/verify-token - Verificar validez de token
 router.get('/verify-token', authController.verifyToken);
 
-// ==============================================
-// RUTAS PROTEGIDAS (requieren autenticación)
-// ==============================================
-
 // GET /api/auth/me - Obtener datos del usuario actual
 router.get('/me', authenticateToken, authController.getCurrentUser);
 
