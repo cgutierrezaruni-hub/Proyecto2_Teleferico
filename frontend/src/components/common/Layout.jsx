@@ -117,9 +117,6 @@ const Layout = () => {
                     <span className="nav-icon">💼</span>
                     <span className="nav-text">Mis Entrevistas</span>
                   </Link>
-                  <Link to="/" className={`nav-item ${isActive('/') ? 'active' : ''}`}>
-                    <span className="nav-text">Tutoriales</span>
-                  </Link>
                 </>
               )}
 

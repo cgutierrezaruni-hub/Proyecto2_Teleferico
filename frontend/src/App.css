@@ -98,3 +98,71 @@ body {
   background: #dc3545;
   color: white;
 }
+/* ========== ESTILOS PARA APP ========== */
+
+/* Contenedor de loading */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  color: white;
+}
+
+.loading-content {
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #3498db;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Contenido de páginas */
+.page-content {
+  padding: 40px;
+  text-align: center;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  margin: 20px;
+}
+
+.page-content h2 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 28px;
+}
+
+.page-content p {
+  color: #666;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Responsive para páginas */
+@media (max-width: 768px) {
+  .page-content {
+    padding: 20px;
+    margin: 10px;
+  }
+  
+  .page-content h2 {
+    font-size: 24px;
+  }
+  
+  .page-content p {
+    font-size: 14px;
+  }
+}

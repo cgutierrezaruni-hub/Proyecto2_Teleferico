@@ -352,3 +352,64 @@
   margin-bottom: 20px;
   border: 1px solid #c3e6cb;
 }
+
+/* ========== ESTILOS PARA RECUPERACIÓN DE CONTRASEÑA ========== */
+
+/* Texto de ayuda para formularios */
+.form-helper-text {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 15px;
+  line-height: 1.4;
+}
+
+/* Input para códigos de verificación */
+.code-input {
+  text-align: center;
+  font-size: 24px;
+  letter-spacing: 8px;
+  font-weight: bold;
+  padding: 12px;
+  border: 2px solid #667eea;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 250px;
+  margin: 0 auto;
+  display: block;
+  box-sizing: border-box;
+}
+
+/* Ajustes responsivos para el código */
+@media (max-width: 480px) {
+  .code-input {
+    font-size: 20px;
+    letter-spacing: 6px;
+    padding: 10px;
+    max-width: 200px;
+  }
+}
+
+/* Botón secundario */
+.auth-button.secondary {
+  background: #6c757d;
+  margin-top: 10px;
+}
+
+.auth-button.secondary:hover {
+  background: #5a6268;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+}
+
+/* Mejora para el formulario de recuperación */
+.auth-form {
+  width: 100%;
+}
+
+.auth-form .form-group {
+  text-align: left;
+}
+
+.auth-form .form-group input {
+  width: 100%;
+}

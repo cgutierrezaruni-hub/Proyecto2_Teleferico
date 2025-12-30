@@ -2,21 +2,26 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
+// Importar CSS
+import './App.css';
+
 // Componentes de Auth
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
-
+import ForgotPassword from './components/auth/ForgotPassword';  // ¡NUEVO!
 
 import Layout from './components/common/Layout';
 import DashboardPostulante from './components/postulante/DashboardPostulante';
 
+import MiPerfil from './components/postulante/MiPerfil'; // ← NUEVO IMPORT
+import './components/postulante/MiPerfil.css'; // ← NUEVO IMPORT CSS
 
-const MiPerfil = () => (
+/* const MiPerfil = () => (
   <div style={{ padding: '40px', textAlign: 'center' }}>
     <h2>Mi Perfil</h2>
     <p>Esta sección estará disponible pronto</p>
   </div>
-);
+); */
 
 const MisDocumentos = () => (
   <div style={{ padding: '40px', textAlign: 'center' }}>
@@ -34,29 +39,13 @@ const MisEntrevistas = () => (
 
 // Componente de Loading
 const LoadingScreen = () => (
-  <div style={{ 
-    display: 'flex', 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    height: '100vh',
-    background: '#1a1a2e',
-    color: 'white'
-  }}>
-    <div style={{ textAlign: 'center' }}>
-      <div style={{
-        width: '50px',
-        height: '50px',
-        border: '4px solid #3498db',
-        borderTopColor: 'transparent',
-        borderRadius: '50%',
-        animation: 'spin 1s linear infinite',
-        margin: '0 auto 20px'
-      }}></div>
+  <div className="loading-container">
+    <div className="loading-content">
+      <div className="loading-spinner"></div>
       <p>Cargando sistema de pasantías...</p>
     </div>
   </div>
 );
-
 
 const ProtectedRoute = ({ children }) => {
   const { usuario, cargando, estaAutenticado } = useAuth();
@@ -78,11 +67,12 @@ function App() {
     <Router>
       <AuthProvider>
         <Routes>
- 
+          {/* ========== RUTAS PÚBLICAS ========== */}
           <Route path="/login" element={<Login />} />
           <Route path="/registro" element={<Register />} />
-          
+          <Route path="/forgot-password" element={<ForgotPassword />} />
 
+          {/* ========== RUTAS PROTEGIDAS ========== */}
           <Route path="/" element={
             <ProtectedRoute>
               <Layout />
@@ -101,19 +91,19 @@ function App() {
             
             {/* Módulos para JEFE */}
             <Route path="postulantes" element={
-              <div style={{ padding: '40px', textAlign: 'center' }}>
+              <div className="page-content">
                 <h2>Lista de Postulantes</h2>
                 <p>Gestiona los postulantes de tu área</p>
               </div>
             } />
             <Route path="mis-pasantes" element={
-              <div style={{ padding: '40px', textAlign: 'center' }}>
+              <div className="page-content">
                 <h2>Mis Pasantes</h2>
                 <p>Visualiza los pasantes bajo tu cargo</p>
               </div>
             } />
             <Route path="historial-entrevistas" element={
-              <div style={{ padding: '40px', textAlign: 'center' }}>
+              <div className="page-content">
                 <h2>Historial de Entrevistas</h2>
                 <p>Consulta el historial de entrevistas realizadas</p>
               </div>
@@ -121,37 +111,37 @@ function App() {
             
             {/* Módulos para RRHH */}
             <Route path="gestion-postulantes" element={
-              <div style={{ padding: '40px', textAlign: 'center' }}>
+              <div className="page-content">
                 <h2>Gestión de Postulantes</h2>
                 <p>Administra todos los postulantes del sistema</p>
               </div>
             } />
             <Route path="agenda-entrevistas" element={
-              <div style={{ padding: '40px', textAlign: 'center' }}>
+              <div className="page-content">
                 <h2>Agenda de Entrevistas</h2>
                 <p>Programa y gestiona entrevistas</p>
               </div>
             } />
             <Route path="departamentos" element={
-              <div style={{ padding: '40px', textAlign: 'center' }}>
+              <div className="page-content">
                 <h2>Departamentos</h2>
                 <p>Administra los departamentos de la empresa</p>
               </div>
             } />
             <Route path="induccion" element={
-              <div style={{ padding: '40px', textAlign: 'center' }}>
+              <div className="page-content">
                 <h2>Inducción</h2>
                 <p>Gestiona el proceso de inducción</p>
               </div>
             } />
             <Route path="tutoriales" element={
-              <div style={{ padding: '40px', textAlign: 'center' }}>
+              <div className="page-content">
                 <h2>Tutoriales</h2>
                 <p>Administra los tutoriales para pasantes</p>
               </div>
             } />
             <Route path="reportes" element={
-              <div style={{ padding: '40px', textAlign: 'center' }}>
+              <div className="page-content">
                 <h2>Reportes</h2>
                 <p>Genera reportes estadísticos</p>
               </div>

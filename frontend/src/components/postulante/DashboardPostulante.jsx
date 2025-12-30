@@ -13,7 +13,12 @@ const DashboardPostulante = () => {
         <div className="card">
           <h3>Mi Perfil</h3>
           <p>Completa y actualiza tu información personal</p>
-          <button className="card-button">Ver Perfil</button>
+          <button 
+            className="card-button"
+            onClick={() => window.location.href = '/mi-perfil'}
+          >
+            Ver Perfil
+          </button>
         </div>
         
         <div className="card">
@@ -31,8 +36,9 @@ const DashboardPostulante = () => {
         <div className="card">
           <h3>Estado</h3>
           <p>Consulta el estado de tu postulación</p>
-          <div className="status-badge pendiente">PENDIENTE</div>
+          <div className="status-badge pendiente">ENVIADO</div>
         </div>
+
       </div>
     </div>
   );
