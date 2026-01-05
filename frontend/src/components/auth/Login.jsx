@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { toast } from 'react-hot-toast';
 import './Auth.css';
+import fondo from '../../assets/nublado.jpg';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +11,7 @@ const Login = () => {
     password: ''
   });
   const [cargando, setCargando] = useState(false);
+  const [mostrarCredenciales, setMostrarCredenciales] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -22,6 +24,12 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!formData.email || !formData.password) {
+      toast.error('Por favor completa todos los campos');
+      return;
+    }
+    
     setCargando(true);
 
     try {
@@ -29,98 +37,157 @@ const Login = () => {
 
       if (result.success) {
         toast.success('¡Login exitoso!');
-        
-        // Pequeña pausa antes de redirigir
-        setTimeout(() => {
-          navigate('/dashboard');
-        }, 500);
+        setTimeout(() => navigate('/dashboard'), 500);
       } else {
         toast.error(result.error || 'Error en el login');
       }
     } catch (error) {
-      toast.error('Error inesperado');
+      console.error('Error detallado:', error);
+      toast.error(error.message || 'Error inesperado');
     } finally {
       setCargando(false);
     }
   };
 
+  // Credenciales de prueba para desarrollo
+  const credencialesPrueba = [
+    { rol: 'Postulante', email: 'maria.gonzalez@email.com', password: 'password123', hash: '$2a$10$N9qo8uLOickgx2ZMRZoMye' },
+    { rol: 'Jefe de Área', email: 'jefe.it@empresa.com', password: 'admin456', hash: '$2a$10$UZ4mR7WkLJvFfE9pYq8sN.' },
+    { rol: 'RRHH', email: 'rrhh1@empresa.com', password: 'secure789', hash: '$2a$10$H5gF8tR2wV3bN6mK7jL0pQ' }
+  ];
+
+  const usarCredencial = (email, password) => {
+    setFormData({ email, password });
+    toast.success(`Credencial de ${email} cargada`);
+  };
+
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <div className="auth-header">
-          <h2 className="auth-title">Mi Teleférico</h2>
-          <p className="auth-subtitle">Sistema de Pasantías</p>
-        </div>
-        
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-group">
-            <label>Email</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="tu@email.com"
-              required
-              disabled={cargando}
-              autoComplete="email"
-            />
-          </div>
+    <div className="login-container">
+      {/* COLUMNA IZQUIERDA */}
+      <div className="left-column">
+        <div className="login-card">
+          <h1 className="login-title">Iniciar Sesión</h1>
+          <p className="login-subtitle">
+            Sistema de Gestión de Pasantías - Mi Teleférico
+          </p>
 
-          <div className="form-group">
-            <label>Contraseña</label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="••••••••"
-              required
-              disabled={cargando}
-              autoComplete="current-password"
-            />
-          </div>
+          <form onSubmit={handleSubmit}>
+            <div className="input-group">
+              <label className="input-label">Correo Electrónico</label>
+              <input
+                type="email"
+                name="email"
+                className="input-field"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="tu@email.com"
+                required
+                disabled={cargando}
+                autoComplete="email"
+              />
+            </div>
 
+            <div className="input-group">
+              <label className="input-label">Contraseña</label>
+              <input
+                type="password"
+                name="password"
+                className="input-field"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="••••••••"
+                required
+                disabled={cargando}
+                autoComplete="current-password"
+              />
+            </div>
+
+            <button 
+              type="submit" 
+              className="login-btn" 
+              disabled={cargando}
+            >
+              {cargando ? (
+                <>
+                  <span className="spinner-small"></span> INICIANDO SESIÓN...
+                </>
+              ) : 'INICIAR SESIÓN'}
+            </button>
+          </form>
+
+          {/* BOTÓN PARA MOSTRAR CREDENCIALES */}
           <button 
-            type="submit" 
-            className="auth-button"
-            disabled={cargando}
+            className="toggle-credenciales-btn"
+            onClick={() => setMostrarCredenciales(!mostrarCredenciales)}
+            type="button"
           >
-            {cargando ? (
-              <>
-                <span className="spinner"></span> Conectando...
-              </>
-            ) : 'Iniciar Sesión'}
+            {mostrarCredenciales ? '▲ Ocultar credenciales' : '▼ Mostrar credenciales de prueba'}
           </button>
-        </form>
 
-        <div className="auth-links">
-          <p>
-            ¿No tienes cuenta?{' '}
-            <Link to="/registro" className="auth-link">
-              Regístrate como postulante
-            </Link>
-          </p>
-          <p>
-            <Link to="/forgot-password" className="auth-link">
-              ¿Olvidaste tu contraseña?
-            </Link>
-          </p>
-        </div>
+          {/* SECCIÓN DE CREDENCIALES (colapsable) */}
+          {mostrarCredenciales && (
+            <div className="credenciales-container">
+              <h4 className="credenciales-title">Credenciales para Desarrollo</h4>
+              <p className="credenciales-desc">
+                Estas son credenciales de ejemplo para pruebas. 
+                Las contraseñas están hasheadas con bcrypt en producción.
+              </p>
+              
+              {credencialesPrueba.map((credencial, index) => (
+                <div key={index} className="credencial-item">
+                  <div className="credencial-info">
+                    <strong>{credencial.rol}:</strong>
+                    <div className="credencial-email">{credencial.email}</div>
+                    <div className="credencial-password">
+                      <span>Contraseña: </span>
+                      <code>{credencial.password}</code>
+                    </div>
+                    <div className="credencial-hash">
+                      <small>Hash: {credencial.hash}...</small>
+                    </div>
+                  </div>
+                  <button
+                    className="usar-credencial-btn"
+                    onClick={() => usarCredencial(credencial.email, credencial.password)}
+                    type="button"
+                    disabled={cargando}
+                  >
+                    Usar
+                  </button>
+                </div>
+              ))}
+              
+              <div className="credenciales-nota">
+                <small>
+                  <strong>Nota:</strong> En producción, las contraseñas se almacenan como hashes.
+                  Los hashes mostrados son ejemplos del formato bcrypt.
+                </small>
+              </div>
+            </div>
+          )}
 
-        <div className="auth-test-credentials">
-          <p><strong>Credenciales de prueba:</strong></p>
-          <div className="credentials-list">
-            <div className="credential-item">
-              <strong>Postulante:</strong> maria.gonzalez@email.com / $2a$10$hash1
-            </div>
-            <div className="credential-item">
-              <strong>Jefe:</strong> jefe.it@empresa.com / $2a$10$hash8
-            </div>
-            <div className="credential-item">
-              <strong>RRHH:</strong> rrhh1@empresa.com / $2a$10$hash6
-            </div>
+          <div className="auth-links">
+            <p>
+              ¿No tienes cuenta?{' '}
+              <Link to="/registro" className="auth-link">
+                Regístrate como postulante
+              </Link>
+            </p>
+            <p>
+              <Link to="/forgot-password" className="auth-link">
+                ¿Olvidaste tu contraseña?
+              </Link>
+            </p>
           </div>
+        </div>
+      </div>
+
+      {/* COLUMNA DERECHA */}
+      <div className="right-column">
+        <img src={fondo} alt="Fondo" className="background-image" />
+        <div className="image-text">
+          <h2 className="image-title">MIS PASANTÍAS</h2>
+          <p className="image-subtitle">Mi Teleférico</p>
         </div>
       </div>
     </div>

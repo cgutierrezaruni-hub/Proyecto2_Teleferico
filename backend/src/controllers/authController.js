@@ -1,22 +1,82 @@
-// backend/src/controllers/authController.js - VERSIÓN FINAL CORREGIDA
+// backend/src/controllers/authController.js - VERSIÓN SEGURA
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const usuarioQueries = require('../queries/usuarios/usuarioQueries');
-const pool = require('../config/database');
+const passwordResetQueries = require('../queries/passwordResetQueries');
+const nodemailer = require('nodemailer');
 
-const codigosRecuperacion = new Map();
+// ================= HELPERS =================
+
+const isBcryptHash = (h) => typeof h === 'string' && /^\$2[aby]\$/.test(h);
+const isLikelyPlain = (h) => typeof h === 'string' && !h.includes('$');
+
+const migratePlainPasswordIfNeeded = async (usuario, plainPassword) => {
+  if (!usuario || !usuario.password_hash) return false;
+  if (isBcryptHash(usuario.password_hash)) return false;
+  if (!isLikelyPlain(usuario.password_hash)) return false;
+
+  if (usuario.password_hash === plainPassword) {
+    try {
+      const salt = await bcrypt.genSalt(10);
+      const newHashed = await bcrypt.hash(plainPassword, salt);
+      await usuarioQueries.updatePassword(usuario.ci, newHashed);
+      console.log(`🔁 Migración exitosa a bcrypt para: ${usuario.email}`);
+      return true;
+    } catch (err) {
+      console.error('❌ Error actualizando password durante migración:', err);
+      return true;
+    }
+  }
+  return false;
+};
+
+const createTransporter = () => {
+  if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
+    return nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: parseInt(process.env.SMTP_PORT || '587', 10),
+      secure: process.env.SMTP_SECURE === 'true',
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS
+      }
+    });
+  }
+  return null;
+};
+
+const sendRecoveryEmail = async (email, code) => {
+  const transporter = createTransporter();
+  const subject = 'Recuperación de contraseña';
+  const text = `Tu código de recuperación es: ${code}. Expira en 15 minutos.`;
+
+  if (transporter) {
+    await transporter.sendMail({
+      from: process.env.SMTP_FROM || process.env.SMTP_USER,
+      to: email,
+      subject,
+      text
+    });
+    return { sent: true };
+  } else {
+    // En desarrollo o si no hay SMTP, loguear el código
+    console.log(`✉️ Recovery code for ${email}: ${code}`);
+    return { sent: false, code };
+  }
+};
+
+// ================= CONTROLLER =================
 
 const authController = {
 
   // ==============================================
-  // LOGIN - ACEPTA CUALQUIER CONTRASEÑA
+  // LOGIN - VERSIÓN SEGURA
   // ==============================================
   login: async (req, res) => {
     try {
       const { email, password } = req.body;
       
       console.log('🔐 Login intento para:', email);
-      console.log('📝 Contraseña recibida:', password ? '***' : 'vacía');
       
       // 1. Validar entrada
       if (!email || !password) {
@@ -38,52 +98,32 @@ const authController = {
       
       console.log('✅ Usuario encontrado:', usuario.email);
       
-      // 3. COMPARACIÓN INTELIGENTE - ACEPTA TODO
+      // 3. VERIFICACIÓN SEGURA CON BCRYPT
       let passwordValido = false;
-      
-      // ¿La contraseña en BD parece bcrypt? (empieza con $2a$)
-      const pareceBcrypt = usuario.password_hash && 
-                          usuario.password_hash.startsWith('$2a$');
-      
-      console.log('🔍 Contraseña en BD parece bcrypt?:', pareceBcrypt);
-      
-      if (pareceBcrypt) {
-        // INTENTAR PRIMERO CON BCRYPT
-        try {
-          console.log('🔄 Intentando bcrypt.compare...');
-          passwordValido = await bcrypt.compare(password, usuario.password_hash);
-          console.log('✅ Resultado bcrypt.compare:', passwordValido);
-          
-          // Si bcrypt falla, INTENTAR COMO TEXTO PLANO
-          if (!passwordValido) {
-            console.log('⚠️ bcrypt falló, intentando como texto plano...');
-            passwordValido = (usuario.password_hash === password);
-            console.log('📝 Resultado texto plano:', passwordValido);
+
+      if (usuario.password_hash) {
+        if (isBcryptHash(usuario.password_hash)) {
+          try {
+            passwordValido = await bcrypt.compare(password, usuario.password_hash);
+          } catch (bcryptErr) {
+            console.error('🔥 Error en bcrypt.compare:', bcryptErr);
+            passwordValido = false;
           }
-        } catch (bcryptError) {
-          // Si hay error en bcrypt, usar texto plano
-          console.log('❌ Error en bcrypt, usando texto plano:', bcryptError.message);
-          passwordValido = (usuario.password_hash === password);
+        } else {
+          // Solo migramos si parece texto plano
+          const migrado = await migratePlainPasswordIfNeeded(usuario, password);
+          passwordValido = migrado;
         }
-      } else {
-        // NO parece bcrypt, comparar directamente
-        console.log('📝 Comparando texto plano directamente...');
-        passwordValido = (usuario.password_hash === password);
-        console.log('✅ Resultado:', passwordValido);
       }
       
       // 4. Si la contraseña es incorrecta
       if (!passwordValido) {
         console.log('❌ Contraseña incorrecta');
-        console.log('🔍 BD:', usuario.password_hash);
-        console.log('🔍 Usuario:', password);
         return res.status(401).json({ 
           success: false, 
-          error: 'Contraseña incorrecta' 
+          error: 'Credenciales incorrectas' 
         });
       }
-      
-      console.log('🎉 ¡CONTRASEÑA VÁLIDA! Login exitoso');
       
       // 5. Crear token JWT
       const token = jwt.sign(
@@ -120,7 +160,7 @@ const authController = {
   },
 
   // ==============================================
-  // REGISTRO - GUARDA COMO TEXTO PLANO
+  // REGISTRO - VERSIÓN SEGURA (SIEMPRE HASH)
   // ==============================================
   register: async (req, res) => {
     try {
@@ -136,6 +176,14 @@ const authController = {
         });
       }
       
+      // Verificar longitud de contraseña
+      if (password.length < 6) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'La contraseña debe tener al menos 6 caracteres' 
+        });
+      }
+      
       // Verificar si email ya existe
       const existe = await usuarioQueries.findByEmail(email);
       if (existe) {
@@ -146,18 +194,23 @@ const authController = {
         });
       }
       
-      // GUARDAR COMO TEXTO PLANO - ¡IMPORTANTE!
-      // Así funcionará con cualquier contraseña
+      // ========== ¡SIEMPRE CREAR HASH BCRYPT! ==========
+      console.log('🔐 Creando hash seguro para nueva contraseña...');
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+      console.log('✅ Hash creado');
+      
+      // Crear usuario con HASH, NO texto plano
       const nuevoUsuario = await usuarioQueries.create({
-        ci: parseInt(ci),
+        ci: parseInt(ci, 10),
         extension_ci: extension_ci || 'LP',
         email: email,
-        password_hash: password,  // ← TEXTO PLANO
+        password_hash: hashedPassword,  // ← ¡HASH SEGURO!
         nombre_completo: nombre_completo,
         rol: 'postulante'
       });
       
-      console.log('✅ Usuario registrado:', email);
+      console.log('✅ Usuario registrado con hash:', email);
       
       // Responder
       res.status(201).json({
@@ -172,7 +225,7 @@ const authController = {
       });
       
     } catch (error) {
-      console.error('🔥 Error en registro:', error.message);
+      console.error('🔥 Error en registro:', error.message || error);
       res.status(500).json({ 
         success: false, 
         error: 'Error al registrar usuario' 
@@ -181,236 +234,69 @@ const authController = {
   },
 
   // ==============================================
-  // RECUPERACIÓN DE CONTRASEÑA
+  // MIGRAR USUARIOS EXISTENTES A BCRYPT
   // ==============================================
-  forgotPassword: async (req, res) => {
+  migrateUsersToBcrypt: async (req, res) => {
     try {
-      const { email } = req.body;
+      console.log('🔄 Iniciando migración de usuarios a bcrypt...');
       
-      console.log('📧 Solicitud recuperación:', email);
-      
-      if (!email) {
-        return res.status(400).json({ 
-          success: false, 
-          error: 'Email requerido' 
-        });
+      // PERMISOS corregidos: permitir en dev o admin
+      if (process.env.NODE_ENV !== 'development' && req.user?.rol !== 'admin') {
+        return res.status(403).json({ success: false, error: 'No autorizado' });
       }
-      
-      const usuario = await usuarioQueries.findByEmail(email);
-      const mensaje = 'Si el email existe, recibirás un código de recuperación.';
-      
-      if (!usuario) {
-        console.log('Email no registrado:', email);
-        return res.json({ success: true, message: mensaje });
-      }
-      
-      const codigo = Math.floor(100000 + Math.random() * 900000).toString();
-      
-      codigosRecuperacion.set(email, {
-        codigo: codigo,
-        expira: Date.now() + 600000,
-        usuarioId: usuario.ci,
-        intentos: 0
-      });
-      
-      console.log('🔑 Código generado:', codigo);
-      
-      let emailEnviado = false;
-      try {
-        const emailService = require('../services/emailService');
-        await emailService.sendRecoveryCode(email, codigo);
-        emailEnviado = true;
-        console.log('✅ Email enviado');
-      } catch (emailError) {
-        console.log('⚠️ Error email:', emailError.message);
-      }
-      
-      const respuesta = {
-        success: true,
-        message: mensaje,
-        email: email
-      };
-      
-      if (process.env.NODE_ENV === 'development') {
-        respuesta.codigo = codigo;
-        respuesta.debug = 'Modo desarrollo';
-      }
-      
-      res.json(respuesta);
-      
-    } catch (error) {
-      console.error('Error forgotPassword:', error);
-      res.status(500).json({ 
-        success: false, 
-        error: 'Error interno' 
-      });
-    }
-  },
 
-  verifyRecoveryCode: async (req, res) => {
-    try {
-      const { email, codigo } = req.body;
-      
-      console.log('🔍 Verificando código para:', email);
-      
-      if (!email || !codigo) {
-        return res.status(400).json({ 
-          success: false, 
-          error: 'Email y código son requeridos' 
-        });
+      const usuarios = await usuarioQueries.findAll();
+      let migrados = 0;
+      let errores = 0;
+
+      for (const usuario of usuarios) {
+        try {
+          if (!usuario.password_hash) continue;
+
+          if (isBcryptHash(usuario.password_hash)) {
+            continue; // ya está bien
+          }
+
+          if (!isLikelyPlain(usuario.password_hash)) {
+            console.log(`⚠️ Omitido (no es texto plano ni bcrypt): ${usuario.email}`);
+            continue; // evitar re-hashear otros tipos de hash
+          }
+
+          // migrar texto plano
+          const salt = await bcrypt.genSalt(10);
+          const hashedPassword = await bcrypt.hash(usuario.password_hash, salt);
+          await usuarioQueries.updatePassword(usuario.ci, hashedPassword);
+          migrados++;
+        } catch (error) {
+          errores++;
+          console.error(`❌ Error migrando usuario ${usuario.email}:`, error);
+        }
       }
-      
-      if (!/^\d{6}$/.test(codigo)) {
-        return res.status(400).json({ 
-          success: false, 
-          error: 'Código inválido. Debe tener 6 dígitos.' 
-        });
-      }
-      
-      const datosCodigo = codigosRecuperacion.get(email);
-      
-      if (!datosCodigo) {
-        return res.status(400).json({ 
-          success: false, 
-          error: 'Código no encontrado o expirado. Solicita uno nuevo.' 
-        });
-      }
-      
-      if (Date.now() > datosCodigo.expira) {
-        codigosRecuperacion.delete(email);
-        return res.status(400).json({ 
-          success: false, 
-          error: 'Código expirado. Solicita uno nuevo.' 
-        });
-      }
-      
-      if (datosCodigo.intentos >= 3) {
-        codigosRecuperacion.delete(email);
-        return res.status(400).json({ 
-          success: false, 
-          error: 'Demasiados intentos fallidos. Solicita un nuevo código.' 
-        });
-      }
-      
-      if (datosCodigo.codigo !== codigo) {
-        datosCodigo.intentos += 1;
-        codigosRecuperacion.set(email, datosCodigo);
-        
-        return res.status(400).json({ 
-          success: false, 
-          error: `Código incorrecto. Intentos restantes: ${3 - datosCodigo.intentos}` 
-        });
-      }
-      
-      console.log('✅ Código verificado para:', email);
-      
-      const resetToken = jwt.sign(
-        {
-          email: email,
-          usuarioId: datosCodigo.usuarioId,
-          tipo: 'password_reset',
-          accion: 'codigo_verificado'
-        },
-        process.env.JWT_SECRET || 'secret_key_desarrollo',
-        { expiresIn: '15m' }
-      );
-      
-      codigosRecuperacion.delete(email);
+
+      console.log(`🎉 Migración completada: ${migrados} migrados, ${errores} errores`);
       
       res.json({
         success: true,
-        message: 'Código verificado correctamente',
-        resetToken: resetToken
+        message: 'Migración completada',
+        stats: {
+          total: usuarios.length,
+          migrados,
+          errores
+        }
       });
       
     } catch (error) {
-      console.error('🔥 Error en verifyRecoveryCode:', error.message);
+      console.error('🔥 Error en migración:', error.message || error);
       res.status(500).json({ 
         success: false, 
-        error: 'Error verificando el código' 
+        error: 'Error en migración' 
       });
     }
   },
 
-  resetPassword: async (req, res) => {
-    try {
-      const { resetToken, newPassword } = req.body;
-      
-      console.log('🔄 Restableciendo contraseña...');
-      
-      if (!resetToken || !newPassword) {
-        return res.status(400).json({ 
-          success: false, 
-          error: 'Token y nueva contraseña son requeridos' 
-        });
-      }
-      
-      if (newPassword.length < 6) {
-        return res.status(400).json({ 
-          success: false, 
-          error: 'La contraseña debe tener al menos 6 caracteres' 
-        });
-      }
-      
-      let decodedToken;
-      try {
-        decodedToken = jwt.verify(
-          resetToken, 
-          process.env.JWT_SECRET || 'secret_key_desarrollo'
-        );
-      } catch (jwtError) {
-        console.log('❌ Token inválido:', jwtError.message);
-        return res.status(400).json({ 
-          success: false, 
-          error: 'Token inválido o expirado. Solicita un nuevo código.' 
-        });
-      }
-      
-      if (decodedToken.tipo !== 'password_reset' || decodedToken.accion !== 'codigo_verificado') {
-        return res.status(400).json({ 
-          success: false, 
-          error: 'Token inválido' 
-        });
-      }
-      
-      const usuario = await usuarioQueries.findByCI(decodedToken.usuarioId);
-      if (!usuario) {
-        return res.status(404).json({ 
-          success: false, 
-          error: 'Usuario no encontrado' 
-        });
-      }
-      
-      // ACTUALIZAR COMO TEXTO PLANO (para consistencia)
-      await pool.query(
-        'UPDATE usuarios SET password_hash = $1 WHERE ci = $2',
-        [newPassword, usuario.ci]  // ← TEXTO PLANO
-      );
-      
-      console.log('✅ Contraseña actualizada para:', usuario.email);
-      
-      try {
-        const emailService = require('../services/emailService');
-        await emailService.sendPasswordChanged(usuario.email);
-        console.log('📧 Confirmación de cambio enviada');
-      } catch (emailError) {
-        console.warn('⚠️ No se pudo enviar confirmación:', emailError.message);
-      }
-      
-      res.json({
-        success: true,
-        message: 'Contraseña actualizada exitosamente.'
-      });
-      
-    } catch (error) {
-      console.error('🔥 Error en resetPassword:', error.message);
-      res.status(500).json({ 
-        success: false, 
-        error: 'Error actualizando la contraseña' 
-      });
-    }
-  },
-
+  // ==============================================
+  // VERIFICAR TOKEN
+  // ==============================================
   verifyToken: async (req, res) => {
     try {
       const token = req.headers.authorization?.split(' ')[1];
@@ -436,7 +322,7 @@ const authController = {
       });
       
     } catch (error) {
-      console.log('❌ Token inválido:', error.message);
+      console.log('❌ Token inválido:', error.message || error);
       res.status(401).json({ 
         success: false,
         error: 'Token inválido o expirado' 
@@ -444,6 +330,9 @@ const authController = {
     }
   },
 
+  // ==============================================
+  // OBTENER USUARIO ACTUAL
+  // ==============================================
   getCurrentUser: async (req, res) => {
     try {
       if (!req.user) {
@@ -462,7 +351,8 @@ const authController = {
         });
       }
       
-      delete usuario.password_hash;
+      // eliminar campo sensible antes de responder
+      if (usuario.password_hash) delete usuario.password_hash;
       
       res.json({
         success: true,
@@ -470,11 +360,95 @@ const authController = {
       });
       
     } catch (error) {
-      console.error('🔥 Error en getCurrentUser:', error.message);
+      console.error('🔥 Error en getCurrentUser:', error.message || error);
       res.status(500).json({ 
         success: false,
         error: 'Error interno del servidor' 
       });
+    }
+  },
+
+  // ========== RECUPERACIÓN ==========
+
+  // 1) solicitar código de recuperación
+  forgotPassword: async (req, res) => {
+    try {
+      const { email } = req.body;
+      if (!email) return res.status(400).json({ success: false, error: 'Email es requerido' });
+
+      // Evitar enumeración: responder success aunque no exista el usuario
+      const usuario = await usuarioQueries.findByEmail(email);
+
+      // Generar código de 6 dígitos
+      const code = Math.floor(100000 + Math.random() * 900000).toString();
+      const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutos
+
+      // Guardar/actualizar en tabla password_resets
+      await passwordResetQueries.upsert(email, code, expiresAt);
+
+      // Enviar email (o log en dev)
+      const emailResult = await sendRecoveryEmail(email, code);
+
+      // En respuesta en desarrollo incluimos el código para facilitar pruebas
+      const response = { success: true, message: 'Si existe la cuenta, se envió un código de recuperación.' };
+      if (process.env.NODE_ENV === 'development' && !emailResult.sent) response.code = code;
+
+      res.json(response);
+    } catch (error) {
+      console.error('🔥 Error en forgotPassword:', error);
+      res.status(500).json({ success: false, error: 'Error al solicitar recuperación' });
+    }
+  },
+
+  // 2) verificar código
+  verifyRecoveryCode: async (req, res) => {
+    try {
+      const { email, code } = req.body;
+      if (!email || !code) return res.status(400).json({ success: false, error: 'Email y código son requeridos' });
+
+      const record = await passwordResetQueries.findByEmail(email);
+      if (!record) return res.status(400).json({ success: false, error: 'Código inválido' });
+
+      const now = new Date();
+      if (record.code !== code || new Date(record.expires_at) < now) {
+        return res.status(400).json({ success: false, error: 'Código inválido o expirado' });
+      }
+
+      res.json({ success: true, message: 'Código válido' });
+    } catch (error) {
+      console.error('🔥 Error en verifyRecoveryCode:', error);
+      res.status(500).json({ success: false, error: 'Error al verificar código' });
+    }
+  },
+
+  // 3) resetear contraseña con código
+  resetPassword: async (req, res) => {
+    try {
+      const { email, code, newPassword } = req.body;
+      if (!email || !code || !newPassword) return res.status(400).json({ success: false, error: 'Email, código y nueva contraseña son requeridos' });
+      if (newPassword.length < 6) return res.status(400).json({ success: false, error: 'La contraseña debe tener al menos 6 caracteres' });
+
+      const record = await passwordResetQueries.findByEmail(email);
+      if (!record) return res.status(400).json({ success: false, error: 'Código inválido' });
+
+      const now = new Date();
+      if (record.code !== code || new Date(record.expires_at) < now) {
+        return res.status(400).json({ success: false, error: 'Código inválido o expirado' });
+      }
+
+      const usuario = await usuarioQueries.findByEmail(email);
+      if (!usuario) return res.status(404).json({ success: false, error: 'Usuario no encontrado' });
+
+      const salt = await bcrypt.genSalt(10);
+      const hashed = await bcrypt.hash(newPassword, salt);
+
+      await usuarioQueries.updatePassword(usuario.ci, hashed);
+      await passwordResetQueries.deleteByEmail(email);
+
+      res.json({ success: true, message: 'Contraseña restablecida correctamente' });
+    } catch (error) {
+      console.error('🔥 Error en resetPassword:', error);
+      res.status(500).json({ success: false, error: 'Error al restablecer contraseña' });
     }
   }
 
