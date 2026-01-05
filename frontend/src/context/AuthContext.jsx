@@ -4,10 +4,7 @@ import { toast } from 'react-hot-toast';
 import { 
   login as apiLogin, 
   register as apiRegister,
-  verifyToken as apiVerifyToken,
-  requestPasswordReset as apiRequestPasswordReset,
-  verifyRecoveryCode as apiVerifyRecoveryCode,
-  resetPassword as apiResetPassword
+  verifyToken as apiVerifyToken
 } from '../services/api';
 
 const AuthContext = createContext({});
@@ -122,91 +119,63 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
   // ================= NUEVAS FUNCIONES PARA RECUPERACIÓN =================
 
   // SOLICITAR RECUPERACIÓN
   const forgotPassword = async (email) => {
     try {
-      console.log('📧 Solicitando recuperación para:', email);
-      
-      const response = await apiRequestPasswordReset(email);
-      
-      if (response.success) {
-        return { 
-          success: true, 
-          message: response.message,
-          codigo: response.codigo // Solo en desarrollo
-        };
-      } else {
-        toast.error(response.error || 'Error al solicitar recuperación');
-        return { 
-          success: false, 
-          error: response.error || 'Error al solicitar recuperación' 
-        };
-      }
-    } catch (error) {
-      console.error('Error en forgotPassword:', error);
-      toast.error('Error de conexión');
-      return { 
-        success: false, 
-        error: 'Error de conexión' 
-      };
+      const res = await fetch(`${API_URL}/api/auth/forgot-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      return await res.json();
+    } catch (err) {
+      console.error('Error en forgotPassword:', err);
+      return { success: false, error: err.message || 'Error de conexión' };
     }
   };
 
   // VERIFICAR CÓDIGO DE RECUPERACIÓN
-  const verifyRecovery = async (email, codigo) => {
+  const verifyRecovery = async (email, code) => {
     try {
-      console.log('🔑 Verificando código:', codigo, 'para:', email);
-      
-      const response = await apiVerifyRecoveryCode(email, codigo);
-      
-      if (response.success) {
-        return { 
-          success: true, 
-          resetToken: response.resetToken 
-        };
-      } else {
-        toast.error(response.error || 'Código incorrecto');
-        return { 
-          success: false, 
-          error: response.error || 'Código incorrecto' 
-        };
-      }
-    } catch (error) {
-      console.error('Error en verifyRecovery:', error);
-      toast.error('Error de conexión');
-      return { 
-        success: false, 
-        error: 'Error de conexión' 
-      };
+      const res = await fetch(`${API_URL}/api/auth/verify-recovery-code`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, code })
+      });
+      return await res.json();
+    } catch (err) {
+      console.error('Error en verifyRecovery:', err);
+      return { success: false, error: err.message || 'Error de conexión' };
     }
   };
 
   // RESTABLECER CONTRASEÑA
-  const resetPassword = async (resetToken, nuevaPassword) => {
+  const resetPassword = async (email, codeOrToken, nuevaPassword) => {
     try {
-      console.log('🔄 Restableciendo contraseña...');
-      
-      const response = await apiResetPassword(resetToken, nuevaPassword);
-      
-      if (response.success) {
-        toast.success('Contraseña actualizada exitosamente');
-        return { success: true };
-      } else {
-        toast.error(response.error || 'Error al actualizar contraseña');
-        return { 
-          success: false, 
-          error: response.error || 'Error al actualizar contraseña' 
-        };
-      }
-    } catch (error) {
-      console.error('Error en resetPassword:', error);
-      toast.error('Error de conexión');
-      return { 
-        success: false, 
-        error: 'Error de conexión' 
-      };
+      const payload = { email, code: codeOrToken, newPassword: nuevaPassword };
+      console.log('🔁 resetPassword payload:', payload);
+
+      const res = await fetch(`${API_URL}/api/auth/reset-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      // intentar parsear JSON aunque sea 4xx/5xx
+      const text = await res.text();
+      let data;
+      try { data = JSON.parse(text); } catch (e) { data = { success: false, error: 'Respuesta no JSON', raw: text }; }
+
+      console.log('🔁 resetPassword response:', res.status, data);
+
+      return data;
+    } catch (err) {
+      console.error('Error en resetPassword:', err);
+      return { success: false, error: err.message || 'Error de conexión' };
     }
   };
 

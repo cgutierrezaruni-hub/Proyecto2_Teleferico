@@ -38,45 +38,58 @@ const ForgotPassword = () => {
   const handleVerifyCode = async (e) => {
     e.preventDefault();
     setCargando(true);
-    
-    const result = await verifyRecovery(email, codigo);
-    
-    if (result.success) {
-      toast.success('Código verificado');
-      setResetToken(result.resetToken);
-      setStep(3);
-    } else {
-      toast.error(result.error || 'Código incorrecto');
+    try {
+      console.log('🔍 Verificando código para', email, codigo);
+      const result = await verifyRecovery(email, codigo);
+      console.log('🔁 verifyRecovery result:', result);
+      if (result && result.success) {
+        toast.success('Código verificado');
+        if (result.resetToken) setResetToken(result.resetToken);
+        setStep(3);
+      } else {
+        toast.error(result?.error || 'Código incorrecto');
+      }
+    } catch (err) {
+      console.error('❌ Error en handleVerifyCode:', err);
+      toast.error(err?.message || 'Error verificando código');
+    } finally {
+      setCargando(false);
     }
-    
-    setCargando(false);
   };
 
   const handleResetPassword = async (e) => {
     e.preventDefault();
-    
+    if (!nuevaPassword || !confirmPassword) {
+      toast.error('Completa ambos campos de contraseña');
+      return;
+    }
     if (nuevaPassword !== confirmPassword) {
       toast.error('Las contraseñas no coinciden');
       return;
     }
-    
     if (nuevaPassword.length < 6) {
       toast.error('La contraseña debe tener al menos 6 caracteres');
       return;
     }
-    
+
     setCargando(true);
-    
-    const result = await resetPassword(resetToken, nuevaPassword);
-    
-    if (result.success) {
-      toast.success('Contraseña actualizada exitosamente');
-      navigate('/login');
-    } else {
-      toast.error(result.error || 'Error al actualizar contraseña');
+    try {
+      const result = await resetPassword(email, codigo, nuevaPassword);
+      console.log('handleResetPassword result:', result);
+      if (result && result.success) {
+        toast.success(result.message || 'Contraseña actualizada');
+        setStep(1);
+        // opcionalmente navegar al login
+        // navigate('/login');
+      } else {
+        toast.error(result?.error || 'No se pudo actualizar la contraseña');
+      }
+    } catch (err) {
+      console.error('Error en handleResetPassword:', err);
+      toast.error(err?.message || 'Error de conexión');
+    } finally {
+      setCargando(false);
     }
-    
-    setCargando(false);
   };
 
   return (
