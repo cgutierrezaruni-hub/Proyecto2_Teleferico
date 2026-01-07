@@ -17,7 +17,9 @@ import DashboardPostulante from './components/postulante/DashboardPostulante';
 import MiPerfil from './components/postulante/MiPerfil'; // ← NUEVO IMPORT
 import MisDocumentos from './components/postulante/documentos/MisDocumentos';
 
-import './components/postulante/MiPerfil.css'; // ← NUEVO IMPORT CSS
+import './components/postulante/MiPerfil.css'; 
+
+import GestionPostulantes from './components/rrhh/GestionPostulantes';
 
 /* const MiPerfil = () => (
   <div style={{ padding: '40px', textAlign: 'center' }}>
@@ -45,7 +47,8 @@ const LoadingScreen = () => (
 );
 
 const ProtectedRoute = ({ children }) => {
-  const { usuario, cargando, estaAutenticado } = useAuth();
+  /*const { usuario, cargando, estaAutenticado } = useAuth();*/
+  const { cargando, estaAutenticado } = useAuth();
   
   if (cargando) {
     return <LoadingScreen />;
@@ -107,12 +110,10 @@ function App() {
             } />
             
             {/* Módulos para RRHH */}
-            <Route path="gestion-postulantes" element={
-              <div className="page-content">
-                <h2>Gestión de Postulantes</h2>
-                <p>Administra todos los postulantes del sistema</p>
-              </div>
-            } />
+            <Route
+              path="gestion-postulantes"
+              element={<GestionPostulantes />}
+            />
             <Route path="agenda-entrevistas" element={
               <div className="page-content">
                 <h2>Agenda de Entrevistas</h2>

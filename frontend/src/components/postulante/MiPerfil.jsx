@@ -36,64 +36,26 @@ const MiPerfil = () => {
 
   // Lista de universidades - usando useMemo para evitar recreación en cada render
   const universidades = useMemo(() => [
-    "Universidad Mayor Real y Pontificia San Francisco Xavier de Chuquisaca",
     "Universidad Mayor de San Andrés",
     "Universidad Mayor de San Simón",
     "Universidad Autónoma Gabriel René Moreno",
-    "Universidad Autónoma Tomás Frías",
     "Universidad Técnica de Oruro",
-    "Universidad Autónoma Juan Misael Saracho",
-    "Escuela Militar de Ingeniería",
-    "Universidad Católica Boliviana San Pablo",
-    "Universidad Autónoma del Beni",
-    "Universidad Evangélica Boliviana",
-    "Universidad Núr",
-    "Universidad Privada de Santa Cruz de la Sierra",
-    "Universidad Andina Simón Bolívar",
-    "Universidad Nacional Siglo XX",
-    "Universidad Privada del Valle",
-    "Universidad Central",
-    "Universidad Adventista de Bolivia",
-    "Universidad Cristiana de Bolivia",
-    "Universidad Nuestra Señora de la Paz",
-    "Universidad Amazónica de Pando",
-    "Universidad Privada Boliviana",
-    "Universidad Privada Franz Tamayo",
-    "Universidad Técnica Privada Cosmos",
-    "Universidad Tecnológica Boliviana",
-    "Universidad de la Amazonía Boliviana",
-    "Universidad Tecnológica Privada de Santa Cruz",
-    "Universidad Bolivia de Informática",
-    "Universidad Loyola",
-    "Universidad de Aquino Bolivia",
-    "Universidad Empresarial de los Andes",
-    "Universidad Latinoamericana",
-    "Universidad Privada Abierta Latinoamericana",
-    "Universidad Militar \"Mariscal Bernardino Bilbao Rioja\"",
-    "Universidad de la Cordillera",
-    "Universidad Privada de Oruro",
-    "Universidad Privada del Chaco",
-    "Universidad Salesiana de Bolivia",
-    "Universidad Nacional Ecológica",
-    "Universidad Nacional del Oriente",
-    "Universidad Privada San Francisco de Asís",
-    "Universidad Real",
-    "Universidad Pedagógica Mariscal Sucre",
+    "Universidad Autónoma Tomás Frías",
+    "Universidad Mayor Real y Pontificia San Francisco Xavier de Chuquisaca",
     "Universidad Pública de El Alto",
+    "Universidad Salesiana de Bolivia",
     "Universidad Privada Domingo Savio",
-    "Universidad Privada Cumbre",
+    "Universidad Privada Franz Tamayo",
+    "Universidad Privada del Valle",
     "Universidad La Salle Bolivia",
-    "Universidad Unidad",
-    "Universidad Unión Bolivariana",
-    "Universidad Policial \"Mariscal Antonio José de Sucre\"",
-    "Universidad Simón I. Patiño",
-    "Universidad Bethesda",
-    "Universidad Privada de Ciencias Administrativas y Tecnológicas",
-    "Universidad Indígena Aymara Túpac Katari",
-    "Universidad Indígena Guaraní Apiaguaiki Tupa",
-    "Universidad Indígena Quechua Casimiro Huanca",
-    "Universidad para el Desarrollo y la Innovación",
-    "Universidad Villa de Oropesa"
+    "Universidad Privada Boliviana",
+    "Universidad UNIFRANZ",
+    "Universidad Católica Boliviana San Pablo",
+    "Escuela Militar de Ingeniería",
+    "Universidad Andina Simón Bolívar",
+    "Universidad Tecnológica Boliviana",
+    "Universidad de Aquino Bolivia",
+    "Universidad Privada de Santa Cruz de la Sierra"
   ], []);
 
   // Lista de carreras - usando useMemo para evitar recreación en cada render
@@ -448,13 +410,14 @@ const MiPerfil = () => {
                 required
               >
                 <option value="">Seleccionar</option>
-                <option value="Primer Año">Primer Año</option>
-                <option value="Segundo Año">Segundo Año</option>
-                <option value="Tercer Año">Tercer Año</option>
-                <option value="Cuarto Año">Cuarto Año</option>
-                <option value="Quinto Año">Quinto Año</option>
+                <option value="Cuarto Semestre">Cuarto Semestre</option>
+                <option value="Quinto Semestre">Quinto Semestre</option>
+                <option value="Sexto Semestre">Sexto Semestre</option>
+                <option value="Septimo Semestre">Septimo Semestre</option>
+                <option value="Octavo Semestre">Octavo Semestre</option>
+                <option value="Noveno Semestre">Noveno Semestre</option>
+                <option value="Decimo Semestre">Decimo Semestre</option>
                 <option value="Egresado">Egresado</option>
-                <option value="Titulado">Titulado</option>
               </select>
             </div>
 

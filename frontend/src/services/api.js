@@ -84,4 +84,28 @@ export const updatePerfilPostulante = async (datosPerfil) => api.post('/postulan
 export const getEstadoPostulacion = async () => api.get('/postulante/estado');
 export const verificarPerfilCompleto = async () => api.get('/postulante/verificar-perfil');
 
+
+// ====================== RRHH ======================
+
+export const getPostulantesRRHH = async () => {
+  return api.get('/rrhh/postulantes');
+};
+
+export const getPasantesRRHH = async () => {
+  return api.get('/rrhh/pasantes');
+};
+
+export const getDepartamentosRRHH = async () => {
+  return api.get('/rrhh/departamentos');
+};
+
+export const getJefesPorDepartamentoRRHH = async (departamentoId) => {
+  return api.get(`/rrhh/jefes/${departamentoId}`);
+};
+
+export const asignarPasanteRRHH = async (data) => {
+  return api.post('/rrhh/asignar-pasante', data);
+};
+
+
 export default api;
