@@ -1,14 +1,15 @@
-// AuthContext.js - VERSIÓN CORREGIDA
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import { 
   login as apiLogin, 
   register as apiRegister,
-  verifyToken as apiVerifyToken
+  verifyToken as apiVerifyToken,
+  requestPasswordReset,
+  verifyRecoveryCode,
+  resetPassword as apiResetPassword
 } from '../services/api';
 
 const AuthContext = createContext({});
-
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
@@ -119,60 +120,28 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-
-  // ================= NUEVAS FUNCIONES PARA RECUPERACIÓN =================
-
-  // SOLICITAR RECUPERACIÓN
+  // RECUPERACIÓN: usar las funciones del servicio unificado
   const forgotPassword = async (email) => {
     try {
-      const res = await fetch(`${API_URL}/api/auth/forgot-password`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
-      });
-      return await res.json();
+      return await requestPasswordReset(email);
     } catch (err) {
       console.error('Error en forgotPassword:', err);
       return { success: false, error: err.message || 'Error de conexión' };
     }
   };
 
-  // VERIFICAR CÓDIGO DE RECUPERACIÓN
   const verifyRecovery = async (email, code) => {
     try {
-      const res = await fetch(`${API_URL}/api/auth/verify-recovery-code`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, code })
-      });
-      return await res.json();
+      return await verifyRecoveryCode(email, code);
     } catch (err) {
       console.error('Error en verifyRecovery:', err);
       return { success: false, error: err.message || 'Error de conexión' };
     }
   };
 
-  // RESTABLECER CONTRASEÑA
   const resetPassword = async (email, codeOrToken, nuevaPassword) => {
     try {
-      const payload = { email, code: codeOrToken, newPassword: nuevaPassword };
-      console.log('🔁 resetPassword payload:', payload);
-
-      const res = await fetch(`${API_URL}/api/auth/reset-password`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      // intentar parsear JSON aunque sea 4xx/5xx
-      const text = await res.text();
-      let data;
-      try { data = JSON.parse(text); } catch (e) { data = { success: false, error: 'Respuesta no JSON', raw: text }; }
-
-      console.log('🔁 resetPassword response:', res.status, data);
-
-      return data;
+      return await apiResetPassword(email, codeOrToken, nuevaPassword);
     } catch (err) {
       console.error('Error en resetPassword:', err);
       return { success: false, error: err.message || 'Error de conexión' };
@@ -212,9 +181,9 @@ export const AuthProvider = ({ children }) => {
       token,
       login,
       registro,
-      forgotPassword,    // ¡AGREGADA!
-      verifyRecovery,    // ¡AGREGADA!
-      resetPassword,     // ¡AGREGADA!
+      forgotPassword,
+      verifyRecovery,
+      resetPassword,
       logout,
       estaAutenticado,
       hasRole,
