@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
+
 // Importar CSS
 import './App.css';
 
@@ -14,6 +15,8 @@ import Layout from './components/common/Layout';
 import DashboardPostulante from './components/postulante/DashboardPostulante';
 
 import MiPerfil from './components/postulante/MiPerfil'; // ← NUEVO IMPORT
+import MisDocumentos from './components/postulante/documentos/MisDocumentos';
+
 import './components/postulante/MiPerfil.css'; // ← NUEVO IMPORT CSS
 
 /* const MiPerfil = () => (
@@ -23,12 +26,6 @@ import './components/postulante/MiPerfil.css'; // ← NUEVO IMPORT CSS
   </div>
 ); */
 
-const MisDocumentos = () => (
-  <div style={{ padding: '40px', textAlign: 'center' }}>
-    <h2>Mis Documentos</h2>
-    <p>Aquí podrás subir y ver tus documentos</p>
-  </div>
-);
 
 const MisEntrevistas = () => (
   <div style={{ padding: '40px', textAlign: 'center' }}>

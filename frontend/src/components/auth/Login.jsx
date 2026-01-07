@@ -51,9 +51,9 @@ const Login = () => {
 
   // Credenciales de prueba para desarrollo
   const credencialesPrueba = [
-    { rol: 'Postulante', email: 'maria.gonzalez@email.com', password: 'password123', hash: '$2a$10$N9qo8uLOickgx2ZMRZoMye' },
-    { rol: 'Jefe de Área', email: 'jefe.it@empresa.com', password: 'admin456', hash: '$2a$10$UZ4mR7WkLJvFfE9pYq8sN.' },
-    { rol: 'RRHH', email: 'rrhh1@empresa.com', password: 'secure789', hash: '$2a$10$H5gF8tR2wV3bN6mK7jL0pQ' }
+    { rol: 'Postulante', email: 'user@example.com', password: 'UserPass123', hash: '$2a$10$N9qo8uLOickgx2ZMRZoMye' },
+    { rol: 'Jefe de Área', email: 'jefe@example.com', password: 'JefePass123', hash: '$2a$10$UZ4mR7WkLJvFfE9pYq8sN.' },
+    { rol: 'RRHH', email: 'rrhh1@example.com', password: 'RrhhPass123', hash: '$2a$10$H5gF8tR2wV3bN6mK7jL0pQ' }
   ];
 
   const usarCredencial = (email, password) => {

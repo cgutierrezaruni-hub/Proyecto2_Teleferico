@@ -85,138 +85,159 @@ const Register = () => {
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <h2 className="auth-title">Sistema de Pasantías</h2>
-        <h3 className="auth-subtitle">Registro de Postulante</h3>
-        
-        <form onSubmit={handleSubmit}>
-          <div className="form-row">
-            <div className="form-group">
-              <label>Carnet de Identidad *</label>
-              <input
-                type="number"
-                name="ci"
-                value={formData.ci}
-                onChange={handleChange}
-                placeholder="Ej: 12345678"
-                required
-                disabled={cargando}
-                min="10000"
-                max="999999999"
-                autoComplete="off"
-              />
-            </div>
+    <div className="login-container">
+      {/* Columna izquierda - Formulario */}
+      <div className="left-column">
+        <div className="login-card">
+          <h2 className="login-title">Sistema de Pasantías</h2>
+          <h3 className="login-subtitle">Registro de Postulante</h3>
+          
+          <form onSubmit={handleSubmit}>
+            <div className="form-row">
+              <div className="input-group">
+                <label className="input-label">Carnet de Identidad *</label>
+                <input
+                  type="number"
+                  name="ci"
+                  value={formData.ci}
+                  onChange={handleChange}
+                  placeholder="Ej: 12345678"
+                  required
+                  disabled={cargando}
+                  min="10000"
+                  max="999999999"
+                  autoComplete="off"
+                  className="input-field"
+                />
+              </div>
 
-            <div className="form-group">
-              <label>Extensión CI *</label>
-              <select
-                name="extension_ci"
-                value={formData.extension_ci}
-                onChange={handleChange}
-                disabled={cargando}
-                required
-                autoComplete="off"
-                autoCorrect="off"
-                autoCapitalize="off"
-                spellCheck="false"
-                id="bolivia-departamento"
-              >
-                <option value="" disabled>
-                  -- Seleccione departamento --
-                </option>
-                {DEPARTAMENTOS_BOLIVIA.map((dep) => (
-                  <option 
-                    key={dep.value} 
-                    value={dep.value}
-                  >
-                    {dep.label}
+              <div className="input-group">
+                <label className="input-label">Extensión CI *</label>
+                <select
+                  name="extension_ci"
+                  value={formData.extension_ci}
+                  onChange={handleChange}
+                  disabled={cargando}
+                  required
+                  autoComplete="off"
+                  className="input-field"
+                >
+                  <option value="" disabled>
+                    -- Seleccione departamento --
                   </option>
-                ))}
-              </select>
+                  {DEPARTAMENTOS_BOLIVIA.map((dep) => (
+                    <option 
+                      key={dep.value} 
+                      value={dep.value}
+                    >
+                      {dep.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
-          </div>
 
-          <div className="form-group">
-            <label>Nombre Completo *</label>
-            <input
-              type="text"
-              name="nombre_completo"
-              value={formData.nombre_completo}
-              onChange={handleChange}
-              placeholder="Ej: Juan Pérez García"
-              required
-              disabled={cargando}
-              autoComplete="name"
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Email *</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Ej: juan.perez@email.com"
-              required
-              disabled={cargando}
-              autoComplete="email"
-            />
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label>Contraseña *</label>
+            <div className="input-group">
+              <label className="input-label">Nombre Completo *</label>
               <input
-                type="password"
-                name="password"
-                value={formData.password}
+                type="text"
+                name="nombre_completo"
+                value={formData.nombre_completo}
                 onChange={handleChange}
-                placeholder="Mínimo 6 caracteres"
+                placeholder="Ej: Juan Pérez García"
                 required
                 disabled={cargando}
-                minLength="6"
-                autoComplete="new-password"
+                autoComplete="name"
+                className="input-field"
               />
-              <small className="form-help">Mínimo 6 caracteres</small>
             </div>
 
-            <div className="form-group">
-              <label>Confirmar Contraseña *</label>
+            <div className="input-group">
+              <label className="input-label">Email *</label>
               <input
-                type="password"
-                name="confirmPassword"
-                value={formData.confirmPassword}
+                type="email"
+                name="email"
+                value={formData.email}
                 onChange={handleChange}
-                placeholder="Repite tu contraseña"
+                placeholder="Ej: juan.perez@email.com"
                 required
                 disabled={cargando}
-                minLength="6"
-                autoComplete="new-password"
+                autoComplete="email"
+                className="input-field"
               />
             </div>
+
+            <div className="form-row">
+              <div className="input-group">
+                <label className="input-label">Contraseña *</label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Mínimo 6 caracteres"
+                  required
+                  disabled={cargando}
+                  minLength="6"
+                  autoComplete="new-password"
+                  className="input-field"
+                />
+                <small className="form-help">Mínimo 6 caracteres</small>
+              </div>
+
+              <div className="input-group">
+                <label className="input-label">Confirmar Contraseña *</label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="Repite tu contraseña"
+                  required
+                  disabled={cargando}
+                  minLength="6"
+                  autoComplete="new-password"
+                  className="input-field"
+                />
+              </div>
+            </div>
+
+            <div className="form-notice">
+              <small>* Campos obligatorios</small>
+            </div>
+
+            <button 
+              type="submit" 
+              className="login-btn"
+              disabled={cargando}
+            >
+              {cargando ? 'Registrando...' : 'Registrarse como Postulante'}
+            </button>
+          </form>
+
+          <div className="auth-links">
+            <p>
+              ¿Ya tienes cuenta?{' '}
+              <Link to="/login" className="auth-link">
+                Inicia sesión aquí
+              </Link>
+            </p>
           </div>
+        </div>
+      </div>
 
-          <div className="form-notice">
-            <small>* Campos obligatorios</small>
-          </div>
-
-          <button 
-            type="submit" 
-            className="auth-button"
-            disabled={cargando}
-          >
-            {cargando ? 'Registrando...' : 'Registrarse como Postulante'}
-          </button>
-        </form>
-
-        <div className="auth-links">
-          <p>
-            ¿Ya tienes cuenta?{' '}
-            <Link to="/login" className="auth-link">
-              Inicia sesión aquí
-            </Link>
+      {/* Columna derecha - Imagen/Background */}
+      <div className="right-column">
+        <img 
+          src="https://images.unsplash.com/photo-1553877522-43269d4ea984?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"
+          alt="Fondo profesional"
+          className="background-image"
+        />
+        <div className="image-text">
+          <h3 className="image-title">Únete a Nuestro Sistema</h3>
+          <p className="image-subtitle">
+            Registrate como postulante y encuentra oportunidades de pasantía 
+            que impulsen tu carrera profesional
           </p>
         </div>
       </div>

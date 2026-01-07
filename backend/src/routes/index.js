@@ -1,11 +1,14 @@
 const express = require('express');
 const router = express.Router();
+
 const authRoutes = require('./authRoutes');
 const postulanteRoutes = require('./postulanteRoutes');
+const documentosRoutes = require('./documentosRoutes');
 
 // Todas las rutas empiezan con /api
 router.use('/auth', authRoutes);
 router.use('/postulante', postulanteRoutes);
+router.use('/documentos', documentosRoutes);
 
 // Ruta de prueba
 router.get('/test', (req, res) => {

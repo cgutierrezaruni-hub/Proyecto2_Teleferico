@@ -24,7 +24,13 @@ const DashboardPostulante = () => {
         <div className="card">
           <h3>Mis Documentos</h3>
           <p>Sube y gestiona tus documentos requeridos</p>
-          <button className="card-button">Ver Documentos</button>
+          <button
+            className="card-button"
+            onClick={() => window.location.href = '/mis-documentos'}
+          >
+            Ver Documentos
+          </button>
+
         </div>
         
         <div className="card">
