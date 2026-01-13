@@ -107,5 +107,14 @@ export const asignarPasanteRRHH = async (data) => {
   return api.post('/rrhh/asignar-pasante', data);
 };
 
+export const getDocumentosPostulanteRRHH = async (postulanteCi) => {
+  return api.get(`/rrhh/documentos/${postulanteCi}`);
+};
+
+export const descargarDocumentoPostulanteRRHH = async (postulanteCi, tipo) => {
+  return api.get(`/rrhh/documentos/${postulanteCi}/${tipo}`, {
+    responseType: 'blob'
+  });
+};
 
 export default api;

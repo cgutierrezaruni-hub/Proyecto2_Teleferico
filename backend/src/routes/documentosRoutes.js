@@ -52,4 +52,13 @@ router.post(
   documentosController.confirmarEnvio
 );
 
+/**
+ * GET /api/documentos/descargar/:tipo
+ * Descarga documento por tipo (requiere token)
+ */
+router.get(
+  '/descargar/:tipo',
+  documentosController.descargarDocumento
+);
+
 module.exports = router;

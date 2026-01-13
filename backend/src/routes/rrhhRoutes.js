@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { authenticateToken } = require('../middleware/auth');
 const rrhhController = require('../controllers/rrhh/rrhhController');
+const rrhhDocumentosController = require('../controllers/rrhh/rrhhDocumentosController');
+
 
 // Middleware: solo RRHH
 const soloRRHH = (req, res, next) => {
@@ -34,5 +36,12 @@ router.get('/jefes/:departamentoId', rrhhController.listarJefesPorDepartamento);
 
 // Asignar pasante
 router.post('/asignar-pasante', rrhhController.asignarPasante);
+
+// Documentos de un postulante
+router.get('/documentos/:postulante_ci', rrhhDocumentosController.listarDocumentosPostulante);
+
+// Descargar documento
+router.get('/documentos/:postulante_ci/:tipo', rrhhDocumentosController.descargarDocumento);
+
 
 module.exports = router;

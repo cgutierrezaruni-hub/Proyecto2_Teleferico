@@ -154,7 +154,86 @@ const documentosController = {
         error: 'Error confirmando envío'
       });
     }
-  }
+  },
+
+
+    /**
+   * GET /api/documentos/descargar/:tipo
+   * Descarga un documento del postulante autenticado
+   */
+  descargarDocumento: async (req, res) => {
+    try {
+      const ci = req.user.ci;
+      const { tipo } = req.params;
+
+      const result = await pool.query(
+        `
+        SELECT archivo_ruta
+        FROM documentos_postulante
+        WHERE postulante_ci = $1 AND tipo = $2
+        `,
+        [ci, tipo]
+      );
+
+      if (result.rows.length === 0) {
+        return res.status(404).json({
+          success: false,
+          error: 'Documento no encontrado'
+        });
+      }
+
+      const ruta = result.rows[0].archivo_ruta;
+
+      if (!fs.existsSync(ruta)) {
+        return res.status(404).json({
+          success: false,
+          error: 'Archivo no existe en el servidor'
+        });
+      }
+
+      res.download(ruta);
+
+    } catch (error) {
+      console.error('Error descargando documento:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Error descargando documento'
+      });
+    }
+  },
+
+  /**
+ * GET /api/rrhh/documentos/:postulante_ci
+ * Lista documentos de un postulante (RRHH)
+ */
+  listarDocumentosPorPostulante: async (req, res) => {
+    try {
+      const { postulante_ci } = req.params;
+
+      const result = await pool.query(
+        `
+        SELECT tipo, archivo_ruta, fecha_subida
+        FROM documentos_postulante
+        WHERE postulante_ci = $1
+        ORDER BY fecha_subida
+        `,
+        [postulante_ci]
+      );
+
+      res.json({
+        success: true,
+        documentos: result.rows
+      });
+    } catch (error) {
+      console.error('Error listando documentos RRHH:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Error obteniendo documentos del postulante'
+      });
+    }
+  },
+
+
 };
 
 module.exports = documentosController;

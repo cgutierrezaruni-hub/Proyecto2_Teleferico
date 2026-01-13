@@ -5,11 +5,13 @@ import {
   getPasantesRRHH
 } from '../../services/api';
 import AsignarPasanteModal from './AsignarPasanteModal';
+import VerDocumentosModal from './VerDocumentosModal';
 
 const GestionPostulantes = () => {
   const [vista, setVista] = useState('postulantes');
   const [lista, setLista] = useState([]);
   const [seleccionado, setSeleccionado] = useState(null);
+  const [verDocumentos, setVerDocumentos] = useState(null);
 
   const cargar = useCallback(async () => {
     const res = vista === 'postulantes'
@@ -84,6 +86,14 @@ const GestionPostulantes = () => {
                   <button onClick={() => setSeleccionado(p)}>
                     Asignar
                   </button>
+
+                  <button
+                    className="btn-secundario"
+                    onClick={() => setVerDocumentos(p)}
+                    type="button"
+                  >
+                    Documentos
+                  </button>
                 </td>
               )}
             </tr>
@@ -98,6 +108,13 @@ const GestionPostulantes = () => {
             setSeleccionado(null);
             cargar();
           }}
+        />
+      )}
+
+      {verDocumentos && (
+        <VerDocumentosModal
+          postulante={verDocumentos}
+          onClose={() => setVerDocumentos(null)}
         />
       )}
     </div>
