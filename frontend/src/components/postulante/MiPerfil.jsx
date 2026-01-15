@@ -9,7 +9,7 @@ import {
 import { toast } from 'react-hot-toast';
 
 const MiPerfil = () => {
-  // Solo llamamos al hook para mantener el contexto
+
   useAuth();
   
   const navigate = useNavigate();
@@ -34,7 +34,7 @@ const MiPerfil = () => {
     cuenta_seguro: false
   });
 
-  // Lista de universidades - usando useMemo para evitar recreación en cada render
+
   const universidades = useMemo(() => [
     "Universidad Mayor de San Andrés",
     "Universidad Mayor de San Simón",
@@ -58,7 +58,6 @@ const MiPerfil = () => {
     "Universidad Privada de Santa Cruz de la Sierra"
   ], []);
 
-  // Lista de carreras - usando useMemo para evitar recreación en cada render
   const carreras = useMemo(() => [
     "Administración de Empresas",
     "Contaduría Pública / Auditoría",
@@ -85,7 +84,7 @@ const MiPerfil = () => {
     "Inglés"
   ], []);
 
-  // Usar useCallback para cargarPerfil - SIN depender de 'perfil'
+
   const cargarPerfil = useCallback(async () => {
     try {
       setCargando(true);
@@ -118,7 +117,7 @@ const MiPerfil = () => {
         // Copiar todos los campos del perfil obtenido
         Object.keys(datosFormateados).forEach(key => {
           if (datos[key] !== undefined && datos[key] !== null) {
-            // Si es fecha, formatear para input date
+     
             if (key === 'fecha_nacimiento' && datos[key]) {
               const fecha = new Date(datos[key]);
               datosFormateados[key] = fecha.toISOString().split('T')[0];
@@ -152,9 +151,8 @@ const MiPerfil = () => {
     } finally {
       setCargando(false);
     }
-  }, [universidades, carreras]); // SOLO universidades y carreras como dependencias
+  }, [universidades, carreras]); 
 
-  // Cargar datos al montar - solo una vez
   useEffect(() => {
     cargarPerfil();
   }, [cargarPerfil]);
@@ -268,7 +266,7 @@ const MiPerfil = () => {
         
         {perfilCompleto && (
           <div className="alert success">
-            ✅ Tu perfil está completo y listo para revisión
+            Perfil completo
           </div>
         )}
       </div>

@@ -117,4 +117,18 @@ export const descargarDocumentoPostulanteRRHH = async (postulanteCi, tipo) => {
   });
 };
 
+
+
+
+// ====================== DEPARTAMENTOS RRHH ======================
+
+export const getResumenDepartamentosRRHH = async () => {
+  return api.get('/rrhh/departamentos/resumen');
+};
+
+export const getPasantesPorDepartamentoRRHH = async (departamentoId) => {
+  return api.get(`/rrhh/departamentos/${departamentoId}/pasantes`);
+};
+
+
 export default api;

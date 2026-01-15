@@ -83,17 +83,23 @@ const GestionPostulantes = () => {
 
               {vista === 'postulantes' && (
                 <td>
-                  <button onClick={() => setSeleccionado(p)}>
-                    Asignar
-                  </button>
+                  <div className="acciones-rrhh">
+                    <button
+                      className="btn-primario-sm"
+                      onClick={() => setSeleccionado(p)}
+                      type="button"
+                    >
+                      Asignar
+                    </button>
 
-                  <button
-                    className="btn-secundario"
-                    onClick={() => setVerDocumentos(p)}
-                    type="button"
-                  >
-                    Documentos
-                  </button>
+                    <button
+                      className="btn-secundario-sm"
+                      onClick={() => setVerDocumentos(p)}
+                      type="button"
+                    >
+                      Documentos
+                    </button>
+                  </div>
                 </td>
               )}
             </tr>

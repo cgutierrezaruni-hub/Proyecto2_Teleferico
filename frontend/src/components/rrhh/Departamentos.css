@@ -1,0 +1,128 @@
+/* ================= LISTA ================= */
+.dep-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ================= CARD ================= */
+.dep-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 16px 18px;
+  border: 1px solid #e5e5e5;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.dep-card:hover {
+  box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+  transform: translateY(-1px);
+}
+
+/* ================= HEADER ================= */
+.dep-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.dep-header h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #000;
+}
+
+.dep-meta {
+  margin-top: 6px;
+}
+
+.dep-meta p {
+  margin: 4px 0;
+  font-size: 13px;
+  color: #000;
+  opacity: 0.75;
+}
+
+/* ================= BOTÓN ================= */
+.dep-header button {
+  background: #000;
+  color: #fff;
+  border: 1px solid #000;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  white-space: nowrap;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.dep-header button:hover {
+  background: #222;
+}
+
+/* ================= PASANTES ================= */
+.dep-pasantes {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #ededed;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dep-pasantes-empty {
+  font-size: 13px;
+  color: #000;
+  opacity: 0.6;
+}
+
+/* ================= PASANTE ITEM ================= */
+.dep-pasante {
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #f6f6f6;
+  border: 1px solid #e5e5e5;
+  display: flex;
+  flex-direction: column;
+}
+
+.dep-pasante strong {
+  font-size: 14px;
+  color: #000;
+}
+
+.dep-pasante span {
+  font-size: 12px;
+  color: #000;
+  opacity: 0.7;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+  .dep-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dep-header button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .dep-card {
+    padding: 14px;
+    border-radius: 10px;
+  }
+
+  .dep-header h4 {
+    font-size: 15px;
+  }
+
+  .dep-pasante {
+    padding: 8px;
+  }
+}

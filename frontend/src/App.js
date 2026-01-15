@@ -9,17 +9,20 @@ import './App.css';
 // Componentes de Auth
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
-import ForgotPassword from './components/auth/ForgotPassword';  // ¡NUEVO!
+import ForgotPassword from './components/auth/ForgotPassword';  
 
 import Layout from './components/common/Layout';
 import DashboardPostulante from './components/postulante/DashboardPostulante';
 
-import MiPerfil from './components/postulante/MiPerfil'; // ← NUEVO IMPORT
+import MiPerfil from './components/postulante/MiPerfil'; 
 import MisDocumentos from './components/postulante/documentos/MisDocumentos';
 
 import './components/postulante/MiPerfil.css'; 
 
 import GestionPostulantes from './components/rrhh/GestionPostulantes';
+
+import Departamentos from './components/rrhh/Departamentos';
+
 
 /* const MiPerfil = () => (
   <div style={{ padding: '40px', textAlign: 'center' }}>
@@ -120,12 +123,8 @@ function App() {
                 <p>Programa y gestiona entrevistas</p>
               </div>
             } />
-            <Route path="departamentos" element={
-              <div className="page-content">
-                <h2>Departamentos</h2>
-                <p>Administra los departamentos de la empresa</p>
-              </div>
-            } />
+            <Route path="departamentos" element={<Departamentos />} />
+
             <Route path="induccion" element={
               <div className="page-content">
                 <h2>Inducción</h2>

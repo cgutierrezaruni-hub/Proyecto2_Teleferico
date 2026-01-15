@@ -127,7 +127,7 @@ const MisDocumentos = () => {
 
       {confirmado && (
         <div className="alert success" style={{ marginTop: '20px' }}>
-          Documentos enviados y bloqueados para edición.
+          Documentos enviados.
         </div>
       )}
     </div>

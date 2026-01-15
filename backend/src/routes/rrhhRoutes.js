@@ -3,6 +3,8 @@ const router = express.Router();
 const { authenticateToken } = require('../middleware/auth');
 const rrhhController = require('../controllers/rrhh/rrhhController');
 const rrhhDocumentosController = require('../controllers/rrhh/rrhhDocumentosController');
+const departamentosController = require('../controllers/rrhh/departamentosController');
+
 
 
 // Middleware: solo RRHH
@@ -42,6 +44,17 @@ router.get('/documentos/:postulante_ci', rrhhDocumentosController.listarDocument
 
 // Descargar documento
 router.get('/documentos/:postulante_ci/:tipo', rrhhDocumentosController.descargarDocumento);
+
+
+// ================================
+// DEPARTAMENTOS (RRHH)
+// ================================
+
+// jefe + cantidad de pasantes
+router.get('/departamentos/resumen', departamentosController.listarResumen);
+
+// Pasantes por departamento
+router.get('/departamentos/:id/pasantes', departamentosController.listarPasantes);
 
 
 module.exports = router;

@@ -1,118 +1,160 @@
 /* ===============================
-   MisDocumentos.css
-   =============================== */
+   MIS DOCUMENTOS - POSTULANTE
+   Diseño corporativo mejorado
+================================ */
 
 /* Contenedor principal */
 .container {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 30px;
 }
 
-/* Título y descripción */
+/* Título */
 .container h1 {
   font-size: 26px;
-  color: #0066cc;
-  margin-bottom: 10px;
+  font-weight: 700;
+  color: #0b5ed7;
+  margin-bottom: 6px;
 }
 
+/* Subtítulo */
 .subtitle {
   color: #555;
   font-size: 15px;
-  margin-bottom: 25px;
+  margin-bottom: 28px;
 }
 
-/* Sección de documentos */
+/* Sección contenedora */
 .form-section {
   background-color: #ffffff;
-  border-radius: 10px;
-  padding: 25px;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e6e6e6;
 }
 
-/* Cada fila de documento */
+/* Cada documento (card) */
 .form-group {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 15px 0;
-  border-bottom: 1px solid #eaeaea;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 0;
+  border-bottom: 1px solid #ededed;
 }
 
 .form-group:last-child {
   border-bottom: none;
 }
 
-/* Etiqueta del documento */
+/* Texto del documento */
 .form-group label {
   font-weight: 600;
   font-size: 14px;
-  color: #333;
+  color: #222;
+  flex: 1;
 }
 
-/* Input de archivo */
-.form-group input[type="file"] {
+/* Estados */
+.form-group span {
   font-size: 14px;
-  padding: 6px;
-}
-
-/* Estados de documento */
-.estado-cargado {
-  color: #2e7d32;
   font-weight: 600;
-  font-size: 14px;
+  white-space: nowrap;
 }
 
-.estado-bloqueado {
-  color: #777;
-  font-size: 14px;
+/* Documento cargado */
+.form-group span[style*="green"] {
+  color: #2e7d32;
+  background: #e8f5e9;
+  padding: 6px 12px;
+  border-radius: 999px;
+}
+
+/* Envío confirmado */
+.form-group span[style*="gray"] {
+  color: #666;
+  background: #f1f1f1;
+  padding: 6px 12px;
+  border-radius: 999px;
+}
+
+/* Input file */
+.form-group input[type="file"] {
+  font-size: 13px;
+  padding: 8px;
+  border: 1px dashed #cfcfcf;
+  border-radius: 10px;
+  cursor: pointer;
+  background-color: #fafafa;
+  min-width: 220px;
+}
+
+.form-group input[type="file"]:hover {
+  background-color: #f3f3f3;
 }
 
 /* Acciones */
 .form-actions {
   display: flex;
   justify-content: flex-end;
-  margin-top: 25px;
+  margin-top: 30px;
 }
 
 /* Botón principal */
 .btn-primary {
-  background: linear-gradient(135deg, #0066cc, #0099ff);
+  background: linear-gradient(135deg, #0b5ed7, #1e88e5);
   color: #ffffff;
   border: none;
-  border-radius: 8px;
-  padding: 14px 30px;
+  border-radius: 12px;
+  padding: 14px 34px;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.25s ease;
+  box-shadow: 0 6px 18px rgba(11, 94, 215, 0.25);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #005bb5, #0088e6);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(11, 94, 215, 0.35);
 }
 
 .btn-primary:disabled {
-  background-color: #cccccc;
+  background: #d0d0d0;
+  box-shadow: none;
   cursor: not-allowed;
 }
 
-/* Mensaje de confirmación */
+/* Mensaje éxito */
 .alert.success {
-  margin-top: 20px;
-  padding: 14px 18px;
+  margin-top: 24px;
+  padding: 16px 20px;
   background-color: #e8f5e9;
   border: 1px solid #c8e6c9;
   color: #2e7d32;
-  border-radius: 8px;
+  border-radius: 12px;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
+  text-align: center;
 }
 
-/* Responsive */
+/* ===============================
+   RESPONSIVE
+================================ */
+
 @media (max-width: 768px) {
   .container {
-    padding: 15px;
+    padding: 18px;
+  }
+
+  .form-group {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .form-group input[type="file"] {
+    width: 100%;
   }
 
   .form-actions {
