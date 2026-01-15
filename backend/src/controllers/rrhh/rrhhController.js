@@ -79,14 +79,86 @@ const rrhhController = {
       });
 
     } catch (error) {
-      console.error('❌ Error asignando pasante:', error);
-      res.status(500).json({
+        console.error('❌ Error asignando pasante:', error.message);
+
+        return res.status(400).json({
+          success: false,
+          error: error.message || 'Error asignando pasante'
+        });
+      }
+  },
+
+  reubicarPasante: async (req, res) => {
+    try {
+      const { usuario_ci, departamento_id, jefe_ci } = req.body;
+
+      if (!usuario_ci || !departamento_id || !jefe_ci) {
+        return res.status(400).json({
+          success: false,
+          error: 'Datos incompletos para reubicar pasante'
+        });
+      }
+
+      const pasante = await rrhhQueries.reubicarPasante({
+        usuario_ci,
+        departamento_id,
+        jefe_ci
+      });
+
+      res.json({
+        success: true,
+        message: 'Pasante reubicado correctamente',
+        pasante
+      });
+
+    } catch (error) {
+      return res.status(400).json({
         success: false,
-        error: 'Error asignando pasante'
+        error: error.message
       });
     }
-  }
+  },
 
+  cambiarEstadoPasante: async (req, res) => {
+    try {
+      const { usuario_ci, estado } = req.body;
+
+      if (!usuario_ci || !estado) {
+        return res.status(400).json({
+          success: false,
+          error: 'Datos incompletos'
+        });
+      }
+
+      await rrhhQueries.cambiarEstadoPasante({ usuario_ci, estado });
+
+      return res.json({
+        success: true,
+        message:
+          estado === 'FINALIZADO'
+            ? 'Pasantía finalizada correctamente'
+            : 'Pasante retirado correctamente'
+      });
+
+    } catch (error) {
+      return res.status(400).json({
+        success: false,
+        error: error.message
+      });
+    }
+  },
+
+  listarPasantesHistorico: async (req, res) => {
+    try {
+      const data = await rrhhQueries.getPasantesHistorico();
+      res.json({ success: true, data });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: 'Error listando histórico de pasantes'
+      });
+    }
+  },
 };
 
 module.exports = rrhhController;

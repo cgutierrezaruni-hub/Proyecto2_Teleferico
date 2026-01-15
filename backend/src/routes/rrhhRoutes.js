@@ -56,5 +56,12 @@ router.get('/departamentos/resumen', departamentosController.listarResumen);
 // Pasantes por departamento
 router.get('/departamentos/:id/pasantes', departamentosController.listarPasantes);
 
+//Reubicar pasantes
+router.put('/pasantes/reubicar', rrhhController.reubicarPasante);
+
+// Estados del pasante
+router.put('/pasantes/estado', rrhhController.cambiarEstadoPasante);
+
+router.get('/pasantes/historico', rrhhController.listarPasantesHistorico);
 
 module.exports = router;

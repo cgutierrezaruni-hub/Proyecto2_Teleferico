@@ -53,7 +53,7 @@ const Layout = () => {
             </button>
             <div className="logo-container">
               <div className="logo-text">
-                <h1 className="logo">Empresa Estatal de Transporte</h1>
+                <h1 className="logo">EETC MI TELEFERICO</h1>
                 <span className="subtitle">Sistema de Pasantías</span>
               </div>
             </div>

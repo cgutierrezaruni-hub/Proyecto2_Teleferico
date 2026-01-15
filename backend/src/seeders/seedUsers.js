@@ -22,7 +22,55 @@ const usuarioQueries = require('../queries/usuarios/usuarioQueries');
         password: 'UserPass123',
         nombre_completo: 'Usuario Seeder',
         rol: 'postulante'
-      }
+      },
+      {
+        ci: 87654322,
+        extension_ci: 'LP',
+        email: 'postulante2@example.com',
+        password: 'UserPass123',
+        nombre_completo: 'María Fernanda López',
+        rol: 'postulante'
+      },
+      {
+        ci: 87654323,
+        extension_ci: 'SC',
+        email: 'postulante3@example.com',
+        password: 'UserPass123',
+        nombre_completo: 'Luis Alberto Quispe',
+        rol: 'postulante'
+      },
+      {
+        ci: 87654324,
+        extension_ci: 'OR',
+        email: 'postulante4@example.com',
+        password: 'UserPass123',
+        nombre_completo: 'Andrea Pamela Flores',
+        rol: 'postulante'
+      },
+      {
+        ci: 87654325,
+        extension_ci: 'PT',
+        email: 'postulante5@example.com',
+        password: 'UserPass123',
+        nombre_completo: 'Miguel Ángel Vargas',
+        rol: 'postulante'
+      },
+      {
+        ci: 85214796,
+        extension_ci: 'LP',
+        email: 'jefeMamani.rrhh@empresa.com',
+        password: 'JefeRRHH123',
+        nombre_completo: 'FLORES MAMANI EDWIN SANTOS',
+        rol: 'jefe'
+      },
+      {
+        ci: 10875269,
+        extension_ci: 'CB',
+        email: 'jefeDaza.sistemas@empresa.com',
+        password: 'JefeSistemas123',
+        nombre_completo: 'GRISI DAZA PABLO ANDRES',
+        rol: 'jefe'
+      },
     ];
 
     for (const u of usuarios) {
