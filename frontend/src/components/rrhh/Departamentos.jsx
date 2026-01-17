@@ -57,7 +57,7 @@ const Departamentos = () => {
                 )}
 
                 {pasantes.map(p => (
-                  <div key={p.usuario_ci} className="dep-pasante">
+                  <div key={p.ci} className="dep-pasante">
                     <strong>{p.nombre_completo}</strong>
                     <span>{p.carrera}</span>
                   </div>

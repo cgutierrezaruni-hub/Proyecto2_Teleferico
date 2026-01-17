@@ -12,7 +12,7 @@ import Register from './components/auth/Register';
 import ForgotPassword from './components/auth/ForgotPassword';  
 
 import Layout from './components/common/Layout';
-import DashboardPostulante from './components/postulante/DashboardPostulante';
+import Dashboard from './components/dashboard/Dashboard';
 
 import MiPerfil from './components/postulante/MiPerfil'; 
 import MisDocumentos from './components/postulante/documentos/MisDocumentos';
@@ -22,6 +22,10 @@ import './components/postulante/MiPerfil.css';
 import GestionPostulantes from './components/rrhh/GestionPostulantes';
 
 import Departamentos from './components/rrhh/Departamentos';
+
+import Induccion from './components/induccion/Induccion';
+import Tutoriales from './components/tutoriales/Tutoriales';
+
 
 
 /* const MiPerfil = () => (
@@ -85,7 +89,7 @@ function App() {
             <Route index element={<Navigate to="/dashboard" />} />
             
             {/* Dashboard principal */}
-            <Route path="dashboard" element={<DashboardPostulante />} />
+            <Route path="dashboard" element={<Dashboard />} />
             
             {/* Módulos para POSTULANTE */}
             <Route path="mi-perfil" element={<MiPerfil />} />
@@ -125,18 +129,9 @@ function App() {
             } />
             <Route path="departamentos" element={<Departamentos />} />
 
-            <Route path="induccion" element={
-              <div className="page-content">
-                <h2>Inducción</h2>
-                <p>Gestiona el proceso de inducción</p>
-              </div>
-            } />
-            <Route path="tutoriales" element={
-              <div className="page-content">
-                <h2>Tutoriales</h2>
-                <p>Administra los tutoriales para pasantes</p>
-              </div>
-            } />
+            <Route path="induccion" element={<Induccion />} />
+            <Route path="tutoriales" element={<Tutoriales />} />
+
             <Route path="reportes" element={
               <div className="page-content">
                 <h2>Reportes</h2>

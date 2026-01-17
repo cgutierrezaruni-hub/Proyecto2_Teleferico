@@ -102,21 +102,33 @@ const Layout = () => {
               {usuario.rol === 'postulante' && (
                 <>
                   <Link to="/dashboard" className={`nav-item ${isActive('/dashboard') ? 'active' : ''}`}>
-                    <span className="nav-icon">📊</span>
-                    <span className="nav-text">Dashboard</span>
+                    📊 Dashboard
                   </Link>
+
                   <Link to="/mi-perfil" className={`nav-item ${isActive('/mi-perfil') ? 'active' : ''}`}>
-                    <span className="nav-icon">👤</span>
-                    <span className="nav-text">Mi Perfil</span>
+                    👤 Mi Perfil
                   </Link>
+
                   <Link to="/mis-documentos" className={`nav-item ${isActive('/mis-documentos') ? 'active' : ''}`}>
-                    <span className="nav-icon">📄</span>
-                    <span className="nav-text">Mis Documentos</span>
+                    📄 Mis Documentos
                   </Link>
+
                   <Link to="/mis-entrevistas" className={`nav-item ${isActive('/mis-entrevistas') ? 'active' : ''}`}>
-                    <span className="nav-icon">💼</span>
-                    <span className="nav-text">Mis Entrevistas</span>
+                    💼 Mis Entrevistas
                   </Link>
+
+                  {/* 👇 SOLO PASANTE ACTIVO */}
+                  {usuario.estado_postulacion === 'ACTIVO' && (
+                    <>
+                      <Link to="/induccion" className={`nav-item ${isActive('/induccion') ? 'active' : ''}`}>
+                        🎯 Inducción
+                      </Link>
+
+                      <Link to="/tutoriales" className={`nav-item ${isActive('/tutoriales') ? 'active' : ''}`}>
+                        🎥 Tutoriales
+                      </Link>
+                    </>
+                  )}
                 </>
               )}
 

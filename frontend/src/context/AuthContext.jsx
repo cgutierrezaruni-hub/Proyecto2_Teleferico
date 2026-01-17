@@ -6,7 +6,7 @@ import {
   verifyToken as apiVerifyToken,
   requestPasswordReset,
   verifyRecoveryCode,
-  resetPassword as apiResetPassword
+  resetPassword as apiResetPassword,
 } from '../services/api';
 
 const AuthContext = createContext({});

@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+
 const ROOT = (process.env.REACT_APP_API_URL || 'http://localhost:5000').replace(/\/+$/, '');
 const API_URL = `${ROOT}/api`;
 console.log('📡 API_URL ->', API_URL);
@@ -129,6 +130,41 @@ export const getResumenDepartamentosRRHH = async () => {
 export const getPasantesPorDepartamentoRRHH = async (departamentoId) => {
   return api.get(`/rrhh/departamentos/${departamentoId}/pasantes`);
 };
+
+
+// ===================== INDUCCIÓN =====================
+export const getInduccionRRHH = () =>
+  api.get('/induccion/rrhh');
+
+export const getInduccionPasante = () =>
+  api.get('/induccion/pasante');
+
+export const subirInduccion = (formData) =>
+  api.post('/induccion/rrhh', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+
+export const descargarInduccion = async (id) => {
+  const res = await api.get(`/induccion/pasante/${id}/descargar`, {
+    responseType: 'blob'
+  });
+  return res;
+};
+
+
+// ===================== TUTORIALES =====================
+
+// RRHH
+export const getTutorialesRRHH = () =>
+  api.get('/tutoriales/rrhh');
+
+// Pasante ACTIVO
+export const getTutorialesPasante = () =>
+  api.get('/tutoriales/pasante');
+
+// Crear tutorial (RRHH)
+export const crearTutorial = (data) =>
+  api.post('/tutoriales/rrhh', data);
 
 
 export default api;
