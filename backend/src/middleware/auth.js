@@ -1,4 +1,3 @@
-// backend/src/middleware/auth.js
 const jwt = require('jsonwebtoken');
 
 const authenticateToken = (req, res, next) => {
@@ -15,7 +14,7 @@ const authenticateToken = (req, res, next) => {
     
     jwt.verify(token, process.env.JWT_SECRET || 'secret_key_desarrollo', (err, user) => {
       if (err) {
-        console.log('❌ Token inválido:', err.message);
+        console.log('Token inválido:', err.message);
         
         if (err.name === 'TokenExpiredError') {
           return res.status(401).json({ 
@@ -31,7 +30,7 @@ const authenticateToken = (req, res, next) => {
       }
       
       req.user = user;
-      console.log('✅ Token válido para:', user.email);
+      console.log('Token válido para:', user.email);
       next();
     });
     

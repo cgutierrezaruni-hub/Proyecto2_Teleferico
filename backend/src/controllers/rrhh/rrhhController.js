@@ -79,7 +79,7 @@ const rrhhController = {
       });
 
     } catch (error) {
-        console.error('❌ Error asignando pasante:', error.message);
+        console.error('Error asignando pasante:', error.message);
 
         return res.status(400).json({
           success: false,

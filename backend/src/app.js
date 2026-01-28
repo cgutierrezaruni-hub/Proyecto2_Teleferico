@@ -8,7 +8,6 @@ const apiRoutes = require('./routes/index');
 const app = express();
 
 // ========== MIDDLEWARES ==========
-// CORS - Permitir solo frontend local
 app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true
@@ -34,7 +33,7 @@ app.get('/', (req, res) => {
 
 // Ruta para probar si llegan datos
 app.post('/api/test-body', (req, res) => {
-  console.log('📦 Body recibido en test:', req.body);
+  console.log('Body recibido en test:', req.body);
   res.json({
     recibido: true,
     body: req.body,

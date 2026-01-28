@@ -1,7 +1,6 @@
-// backend/src/services/emailService.js
 const emailjs = require('@emailjs/nodejs');
 
-// Inicializar EmailJS con tus credenciales
+// Inicializar EmailJS con credenciales
 emailjs.init({
   publicKey: process.env.EMAILJS_PUBLIC_KEY,
   privateKey: process.env.EMAILJS_PRIVATE_KEY
@@ -9,15 +8,15 @@ emailjs.init({
 
 const emailService = {
   
-  // Enviar código de recuperación - VERSIÓN SIMPLE
+  // Enviar código de recuperacion
   sendRecoveryCode: async (email, codigo) => {
     try {
-      console.log(`📧 Enviando código ${codigo} a: ${email}`);
+      console.log(`Enviando código ${codigo} a: ${email}`);
       
       // Enviar email con EmailJS (solo 3 parámetros)
       const response = await emailjs.send(
-        process.env.EMAILJS_SERVICE_ID,      // Tu Service ID
-        process.env.EMAILJS_TEMPLATE_ID,     // Tu Template ID
+        process.env.EMAILJS_SERVICE_ID,      
+        process.env.EMAILJS_TEMPLATE_ID,     
         {
           to_email: email,                   // Email del destinatario
           to_name: email.split('@')[0],      // Nombre del usuario
@@ -26,11 +25,11 @@ const emailService = {
         }
       );
       
-      console.log('✅ Email enviado exitosamente');
+      console.log('Email enviado exitosamente');
       return true;
       
     } catch (error) {
-      console.error('❌ Error enviando email:', error.message);
+      console.error('Error enviando email:', error.message);
       throw error; // Simplemente propaga el error
     }
   }

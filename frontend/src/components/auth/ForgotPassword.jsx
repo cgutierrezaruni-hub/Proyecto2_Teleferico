@@ -39,9 +39,9 @@ const ForgotPassword = () => {
     e.preventDefault();
     setCargando(true);
     try {
-      console.log('🔍 Verificando código para', email, codigo);
+      console.log('Verificando código para', email, codigo);
       const result = await verifyRecovery(email, codigo);
-      console.log('🔁 verifyRecovery result:', result);
+      console.log('verifyRecovery result:', result);
       if (result && result.success) {
         toast.success('Código verificado');
         if (result.resetToken) setResetToken(result.resetToken);
@@ -50,7 +50,7 @@ const ForgotPassword = () => {
         toast.error(result?.error || 'Código incorrecto');
       }
     } catch (err) {
-      console.error('❌ Error en handleVerifyCode:', err);
+      console.error('Error en handleVerifyCode:', err);
       toast.error(err?.message || 'Error verificando código');
     } finally {
       setCargando(false);

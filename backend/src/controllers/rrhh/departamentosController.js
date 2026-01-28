@@ -10,7 +10,7 @@ const departamentosController = {
         data
       });
     } catch (error) {
-      console.error('❌ Error listando departamentos:', error);
+      console.error('Error listando departamentos:', error);
       return res.status(500).json({
         success: false,
         error: 'Error listando departamentos'
@@ -36,7 +36,7 @@ const departamentosController = {
         data
       });
     } catch (error) {
-      console.error('❌ Error listando pasantes del departamento:', error);
+      console.error('Error listando pasantes del departamento:', error);
       return res.status(500).json({
         success: false,
         error: 'Error listando pasantes'

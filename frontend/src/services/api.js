@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-
 const ROOT = (process.env.REACT_APP_API_URL || 'http://localhost:5000').replace(/\/+$/, '');
 const API_URL = `${ROOT}/api`;
 console.log('📡 API_URL ->', API_URL);
@@ -23,7 +22,7 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
-    console.error('❌ Error en request:', error);
+    console.error('Error en request:', error);
     return Promise.reject(error);
   }
 );
@@ -31,12 +30,12 @@ api.interceptors.request.use(
 // Interceptor para respuestas
 api.interceptors.response.use(
   (response) => {
-    console.log(`✅ ${response.status} de: ${response.config.url}`);
+    console.log(` ${response.status} de: ${response.config.url}`);
     return response.data;
   },
   (error) => {
     const errorData = error.response?.data || { error: error.message };
-    console.error('❌ Error en respuesta:', errorData);
+    console.error('Error en respuesta:', errorData);
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
     }

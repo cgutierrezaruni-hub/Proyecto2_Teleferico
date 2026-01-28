@@ -112,6 +112,7 @@
 /* ===== LISTADO ===== */
 .tutorial-item {
   background: #f4f6f7;
+  color: #000;
   padding: 15px;
   border-radius: 8px;
   margin-bottom: 12px;

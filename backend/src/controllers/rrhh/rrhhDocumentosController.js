@@ -1,11 +1,10 @@
-// backend/src/controllers/rrhh/rrhhDocumentosController.js
 const path = require('path');
 const pool = require('../../config/database');
 
 const BASE_UPLOADS = path.resolve(__dirname, '../../../uploads/postulantes');
 
 const rrhhDocumentosController = {
-  // GET /api/rrhh/documentos/:postulante_ci
+
   listarDocumentosPostulante: async (req, res) => {
     try {
       const { postulante_ci } = req.params;
@@ -20,7 +19,6 @@ const rrhhDocumentosController = {
         [postulante_ci]
       );
 
-      // Opcional: ocultar marcador de confirmación
       const docs = result.rows.filter(d => d.tipo !== 'ENVIO_CONFIRMADO');
 
       return res.json({
@@ -36,7 +34,6 @@ const rrhhDocumentosController = {
     }
   },
 
-  // GET /api/rrhh/documentos/:postulante_ci/:tipo
     descargarDocumento: async (req, res) => {
     try {
         const { postulante_ci, tipo } = req.params;
@@ -68,7 +65,6 @@ const rrhhDocumentosController = {
         });
         }
 
-        // 🔴 AQUÍ ESTÁ LA CLAVE
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader(
         'Content-Disposition',

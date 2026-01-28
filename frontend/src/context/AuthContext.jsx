@@ -25,17 +25,17 @@ export const AuthProvider = ({ children }) => {
       
       if (tokenGuardado && usuarioGuardado) {
         try {
-          console.log('🔍 Verificando sesión guardada...');
+          console.log('Verificando sesión guardada...');
           
           // Intentar verificar token con backend
           const response = await apiVerifyToken(tokenGuardado);
           
           if (response.success && response.valid) {
-            console.log('✅ Sesión válida encontrada');
+            console.log('Sesión válida encontrada');
             setUsuario(JSON.parse(usuarioGuardado));
             setToken(tokenGuardado);
           } else {
-            console.log('❌ Sesión inválida, limpiando...');
+            console.log('Sesión inválida, limpiando...');
             limpiarSesion();
           }
         } catch (error) {
@@ -61,7 +61,7 @@ export const AuthProvider = ({ children }) => {
   // LOGIN
   const login = async (email, password) => {
     try {
-      console.log('🔐 Intentando login:', email);
+      console.log('Intentando login:', email);
       
       const response = await apiLogin(email, password);
       
@@ -74,7 +74,7 @@ export const AuthProvider = ({ children }) => {
         setUsuario(response.user);
         setToken(response.token);
         
-        console.log('✅ Login exitoso:', response.user.email);
+        console.log('Login exitoso:', response.user.email);
         toast.success('¡Bienvenido al sistema!');
         
         return { success: true, user: response.user };
@@ -86,7 +86,7 @@ export const AuthProvider = ({ children }) => {
         };
       }
     } catch (error) {
-      console.error('🔥 Error en login:', error);
+      console.error('Error en login:', error);
       toast.error(error.error || 'Error de conexión');
       return { 
         success: false, 
@@ -94,7 +94,7 @@ export const AuthProvider = ({ children }) => {
       };
     }
   };
-
+  
   // REGISTRO
   const registro = async (datosUsuario) => {
     try {

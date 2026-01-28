@@ -2,7 +2,7 @@ const path = require('path');
 const pool = require('../../config/database');
 const induccionQueries = require('../../queries/induccion/induccionQueries');
 
-// 📌 carpeta REAL de uploads
+//carpeta de uploads
 const BASE_UPLOADS = path.resolve(
   __dirname,
   '../../../uploads/rrhh/induccion'
@@ -10,9 +10,6 @@ const BASE_UPLOADS = path.resolve(
 
 const induccionController = {
 
-  // =========================
-  // RRHH
-  // =========================
   listarRRHH: async (req, res) => {
     try {
       const data = await induccionQueries.listarDocumentosRRHH();
@@ -52,9 +49,7 @@ const induccionController = {
     }
   },
 
-  // =========================
   // PASANTE ACTIVO
-  // =========================
   listarPasante: async (req, res) => {
     try {
       const data = await induccionQueries.listarDocumentosPasante();
@@ -65,15 +60,12 @@ const induccionController = {
     }
   },
 
-  // =========================
   // DESCARGAR / VER
-  // =========================
   descargar: async (req, res) => {
     try {
       const { rol, ci } = req.user;
       const id = req.params.id;
 
-      // 👉 validar pasante ACTIVO
       if (rol === 'postulante') {
         const result = await pool.query(
           `SELECT estado_postulacion
@@ -102,7 +94,6 @@ const induccionController = {
 
       const rutaAbs = path.resolve(doc.archivo_ruta);
 
-      // 🔐 seguridad REAL
       if (!rutaAbs.startsWith(BASE_UPLOADS)) {
         return res.status(403).json({
           error: 'Ruta no permitida'

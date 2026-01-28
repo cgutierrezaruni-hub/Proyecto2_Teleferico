@@ -1,4 +1,3 @@
-// backend/src/controllers/authController.js - VERSIÓN SEGURA
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const usuarioQueries = require('../queries/usuarios/usuarioQueries');
@@ -20,10 +19,10 @@ const migratePlainPasswordIfNeeded = async (usuario, plainPassword) => {
       const salt = await bcrypt.genSalt(10);
       const newHashed = await bcrypt.hash(plainPassword, salt);
       await usuarioQueries.updatePassword(usuario.ci, newHashed);
-      console.log(`🔁 Migración exitosa a bcrypt para: ${usuario.email}`);
+      console.log(`Migración exitosa a bcrypt para: ${usuario.email}`);
       return true;
     } catch (err) {
-      console.error('❌ Error actualizando password durante migración:', err);
+      console.error('Error actualizando password durante migración:', err);
       return true;
     }
   }
@@ -60,7 +59,7 @@ const sendRecoveryEmail = async (email, code) => {
     return { sent: true };
   } else {
     // En desarrollo o si no hay SMTP, loguear el código
-    console.log(`✉️ Recovery code for ${email}: ${code}`);
+    console.log(`Recovery code for ${email}: ${code}`);
     return { sent: false, code };
   }
 };
@@ -76,7 +75,7 @@ const authController = {
     try {
       const { email, password } = req.body;
       
-      console.log('🔐 Login intento para:', email);
+      console.log('Login intento para:', email);
       
       // 1. Validar entrada
       if (!email || !password) {
@@ -89,14 +88,14 @@ const authController = {
       // 2. Buscar usuario
       const usuario = await usuarioQueries.findByEmail(email);
       if (!usuario) {
-        console.log('❌ Usuario no encontrado');
+        console.log('Usuario no encontrado');
         return res.status(401).json({ 
           success: false, 
           error: 'Credenciales incorrectas' 
         });
       }
       
-      console.log('✅ Usuario encontrado:', usuario.email);
+      console.log('Usuario encontrado:', usuario.email);
       
       // 3. VERIFICACIÓN SEGURA CON BCRYPT
       let passwordValido = false;
@@ -110,7 +109,6 @@ const authController = {
             passwordValido = false;
           }
         } else {
-          // Solo migramos si parece texto plano
           const migrado = await migratePlainPasswordIfNeeded(usuario, password);
           passwordValido = migrado;
         }
@@ -118,7 +116,7 @@ const authController = {
       
       // 4. Si la contraseña es incorrecta
       if (!passwordValido) {
-        console.log('❌ Contraseña incorrecta');
+        console.log('Contraseña incorrecta');
         return res.status(401).json({ 
           success: false, 
           error: 'Credenciales incorrectas' 
@@ -151,7 +149,7 @@ const authController = {
       });
       
     } catch (error) {
-      console.error('🔥 ERROR en login:', error);
+      console.error('ERROR en login:', error);
       res.status(500).json({ 
         success: false, 
         error: 'Error interno del servidor'
@@ -159,12 +157,10 @@ const authController = {
     }
   },
 
-  // ==============================================
-  // REGISTRO - VERSIÓN SEGURA (SIEMPRE HASH)
-  // ==============================================
+
   register: async (req, res) => {
     try {
-      console.log('📝 Nuevo registro recibido');
+      console.log('Nuevo registro recibido');
       
       const { ci, email, password, nombre_completo, extension_ci } = req.body;
       
@@ -187,7 +183,7 @@ const authController = {
       // Verificar si email ya existe
       const existe = await usuarioQueries.findByEmail(email);
       if (existe) {
-        console.log('❌ Email ya registrado:', email);
+        console.log('Email ya registrado:', email);
         return res.status(400).json({ 
           success: false, 
           error: 'El email ya está registrado' 
@@ -195,22 +191,22 @@ const authController = {
       }
       
       // ========== ¡SIEMPRE CREAR HASH BCRYPT! ==========
-      console.log('🔐 Creando hash seguro para nueva contraseña...');
+      console.log('Creando hash seguro para nueva contraseña...');
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
-      console.log('✅ Hash creado');
+      console.log('Hash creado');
       
       // Crear usuario con HASH, NO texto plano
       const nuevoUsuario = await usuarioQueries.create({
         ci: parseInt(ci, 10),
         extension_ci: extension_ci || 'LP',
         email: email,
-        password_hash: hashedPassword,  // ← ¡HASH SEGURO!
+        password_hash: hashedPassword,  
         nombre_completo: nombre_completo,
         rol: 'postulante'
       });
       
-      console.log('✅ Usuario registrado con hash:', email);
+      console.log('Usuario registrado con hash:', email);
       
       // Responder
       res.status(201).json({
@@ -225,7 +221,7 @@ const authController = {
       });
       
     } catch (error) {
-      console.error('🔥 Error en registro:', error.message || error);
+      console.error('Error en registro:', error.message || error);
       res.status(500).json({ 
         success: false, 
         error: 'Error al registrar usuario' 
@@ -233,14 +229,10 @@ const authController = {
     }
   },
 
-  // ==============================================
-  // MIGRAR USUARIOS EXISTENTES A BCRYPT
-  // ==============================================
   migrateUsersToBcrypt: async (req, res) => {
     try {
-      console.log('🔄 Iniciando migración de usuarios a bcrypt...');
+      console.log('Iniciando migración de usuarios a bcrypt...');
       
-      // PERMISOS corregidos: permitir en dev o admin
       if (process.env.NODE_ENV !== 'development' && req.user?.rol !== 'admin') {
         return res.status(403).json({ success: false, error: 'No autorizado' });
       }
@@ -254,11 +246,11 @@ const authController = {
           if (!usuario.password_hash) continue;
 
           if (isBcryptHash(usuario.password_hash)) {
-            continue; // ya está bien
+            continue; 
           }
 
           if (!isLikelyPlain(usuario.password_hash)) {
-            console.log(`⚠️ Omitido (no es texto plano ni bcrypt): ${usuario.email}`);
+            console.log(`Omitido (no es texto plano ni bcrypt): ${usuario.email}`);
             continue; // evitar re-hashear otros tipos de hash
           }
 
@@ -269,11 +261,11 @@ const authController = {
           migrados++;
         } catch (error) {
           errores++;
-          console.error(`❌ Error migrando usuario ${usuario.email}:`, error);
+          console.error(`Error migrando usuario ${usuario.email}:`, error);
         }
       }
 
-      console.log(`🎉 Migración completada: ${migrados} migrados, ${errores} errores`);
+      console.log(`Migración completada: ${migrados} migrados, ${errores} errores`);
       
       res.json({
         success: true,
@@ -286,7 +278,7 @@ const authController = {
       });
       
     } catch (error) {
-      console.error('🔥 Error en migración:', error.message || error);
+      console.error('Error en migración:', error.message || error);
       res.status(500).json({ 
         success: false, 
         error: 'Error en migración' 
@@ -294,9 +286,7 @@ const authController = {
     }
   },
 
-  // ==============================================
   // VERIFICAR TOKEN
-  // ==============================================
   verifyToken: async (req, res) => {
     try {
       const token = req.headers.authorization?.split(' ')[1];
@@ -313,7 +303,7 @@ const authController = {
         process.env.JWT_SECRET || 'secret_key_desarrollo'
       );
       
-      console.log('✅ Token válido para:', decoded.email);
+      console.log('Token válido para:', decoded.email);
       
       res.json({ 
         success: true,
@@ -322,7 +312,7 @@ const authController = {
       });
       
     } catch (error) {
-      console.log('❌ Token inválido:', error.message || error);
+      console.log('Token inválido:', error.message || error);
       res.status(401).json({ 
         success: false,
         error: 'Token inválido o expirado' 
@@ -330,9 +320,7 @@ const authController = {
     }
   },
 
-  // ==============================================
   // OBTENER USUARIO ACTUAL
-  // ==============================================
   getCurrentUser: async (req, res) => {
     try {
       if (!req.user) {
@@ -360,7 +348,7 @@ const authController = {
       });
       
     } catch (error) {
-      console.error('🔥 Error en getCurrentUser:', error.message || error);
+      console.error('Error en getCurrentUser:', error.message || error);
       res.status(500).json({ 
         success: false,
         error: 'Error interno del servidor' 
@@ -376,7 +364,6 @@ const authController = {
       const { email } = req.body;
       if (!email) return res.status(400).json({ success: false, error: 'Email es requerido' });
 
-      // Evitar enumeración: responder success aunque no exista el usuario
       const usuario = await usuarioQueries.findByEmail(email);
 
       // Generar código de 6 dígitos
@@ -386,16 +373,16 @@ const authController = {
       // Guardar/actualizar en tabla password_resets
       await passwordResetQueries.upsert(email, code, expiresAt);
 
-      // Enviar email (o log en dev)
+      // Enviar email 
       const emailResult = await sendRecoveryEmail(email, code);
 
-      // En respuesta en desarrollo incluimos el código para facilitar pruebas
+      // En respuesta en desarrollo
       const response = { success: true, message: 'Si existe la cuenta, se envió un código de recuperación.' };
       if (process.env.NODE_ENV === 'development' && !emailResult.sent) response.code = code;
 
       res.json(response);
     } catch (error) {
-      console.error('🔥 Error en forgotPassword:', error);
+      console.error('Error en forgotPassword:', error);
       res.status(500).json({ success: false, error: 'Error al solicitar recuperación' });
     }
   },
@@ -416,7 +403,7 @@ const authController = {
 
       res.json({ success: true, message: 'Código válido' });
     } catch (error) {
-      console.error('🔥 Error en verifyRecoveryCode:', error);
+      console.error('Error en verifyRecoveryCode:', error);
       res.status(500).json({ success: false, error: 'Error al verificar código' });
     }
   },
@@ -447,7 +434,7 @@ const authController = {
 
       res.json({ success: true, message: 'Contraseña restablecida correctamente' });
     } catch (error) {
-      console.error('🔥 Error en resetPassword:', error);
+      console.error('Error en resetPassword:', error);
       res.status(500).json({ success: false, error: 'Error al restablecer contraseña' });
     }
   }

@@ -1,4 +1,3 @@
-// backend/src/routes/postulanteRoutes.js
 const express = require('express');
 const router = express.Router();
 const postulanteController = require('../controllers/postulanteController');
@@ -20,6 +19,7 @@ router.use(authenticateToken);
 router.use(verificarPostulante);
 
 // RUTAS PARA POSTULANTES
+
 // GET /api/postulante/perfil - Obtener perfil completo
 router.get('/perfil', postulanteController.getPerfil);
 

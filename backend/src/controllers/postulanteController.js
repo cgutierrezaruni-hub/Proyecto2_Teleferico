@@ -1,4 +1,3 @@
-// backend/src/controllers/postulanteController.js
 const postulanteQueries = require('../queries/postulantes/postulanteQueries');
 
 const postulanteController = {
@@ -71,7 +70,6 @@ const postulanteController = {
     try {
       const ci = req.user.ci;
       
-      // Verificar que sea postulante
       if (req.user.rol !== 'postulante') {
         return res.status(403).json({
           success: false,

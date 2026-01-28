@@ -288,7 +288,7 @@ body {
   background: var(--content-bg);
 }
 
-/* Responsive Design - Mejorado */
+/* Responsive */
 @media (max-width: 1024px) {
   .sidebar {
     width: 250px;

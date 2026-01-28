@@ -1,9 +1,7 @@
-// backend/src/controllers/documentosController.js
 const fs = require('fs');
 const path = require('path');
 const pool = require('../config/database');
 
-// Tipos de documentos permitidos (control empresarial)
 const TIPOS_DOCUMENTO_PERMITIDOS = [
   'carta_solicitud',
   'certificado_notas',
@@ -14,15 +12,10 @@ const TIPOS_DOCUMENTO_PERMITIDOS = [
   'referencias_personales'
 ];
 
-// Directorio final de almacenamiento
 const UPLOADS_DIR = path.join(__dirname, '../../uploads/postulantes');
 
 const documentosController = {
 
-  /**
-   * POST /api/documentos/subir
-   * Sube un documento y lo registra en BD
-   */
   subirDocumento: async (req, res) => {
     try {
       const ci = req.user.ci;
@@ -94,10 +87,6 @@ const documentosController = {
     }
   },
 
-  /**
-   * GET /api/documentos
-   * Lista documentos del postulante
-   */
   listarDocumentos: async (req, res) => {
     try {
       const ci = req.user.ci;
@@ -126,10 +115,6 @@ const documentosController = {
     }
   },
 
-  /**
-   * POST /api/documentos/confirmar
-   * Confirma envío final y bloquea modificaciones
-   */
   confirmarEnvio: async (req, res) => {
     try {
       const ci = req.user.ci;
@@ -156,11 +141,6 @@ const documentosController = {
     }
   },
 
-
-    /**
-   * GET /api/documentos/descargar/:tipo
-   * Descarga un documento del postulante autenticado
-   */
   descargarDocumento: async (req, res) => {
     try {
       const ci = req.user.ci;
@@ -202,10 +182,6 @@ const documentosController = {
     }
   },
 
-  /**
- * GET /api/rrhh/documentos/:postulante_ci
- * Lista documentos de un postulante (RRHH)
- */
   listarDocumentosPorPostulante: async (req, res) => {
     try {
       const { postulante_ci } = req.params;
@@ -232,7 +208,6 @@ const documentosController = {
       });
     }
   },
-
 
 };
 
