@@ -1,30 +1,224 @@
-/* ===== OVERLAY ===== */
+/* =========================================
+   CONTENEDOR PRINCIPAL
+   ========================================= */
+.page-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px 20px;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color: #334155;
+}
+
+.page-content h2 {
+  font-size: 26px;
+  color: #0f172a; 
+  margin-top: 0;
+  margin-bottom: 24px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.page-content h2::after {
+  content: "";
+  flex-grow: 1;
+  height: 2px;
+  background-color: #e2e8f0;
+  margin-left: 10px;
+}
+
+/* =========================================
+   BOTONES GLOBALES
+   ========================================= */
+button {
+  transition: all 0.2s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+}
+
+.btn-primary {
+  background-color: #e11d48; /* Rojo Teleférico */
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 4px 6px -1px rgba(225, 29, 72, 0.2);
+}
+
+.btn-primary:hover {
+  background-color: #be123c; 
+  transform: translateY(-1px);
+  box-shadow: 0 6px 8px -1px rgba(225, 29, 72, 0.3);
+}
+
+.btn-secondary {
+  background-color: #f8fafc;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.btn-secondary:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+  border-color: #94a3b8;
+}
+
+/* =========================================
+   LISTADO DE TUTORIALES (GRILLA)
+   ========================================= */
+.lista-tutoriales {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+  margin-top: 30px;
+}
+
+.empty-text {
+  color: #64748b;
+  font-style: italic;
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px dashed #cbd5e1;
+}
+
+/* Tarjeta de Tutorial */
+.tutorial-item {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Acento rojo en la tarjeta para diferenciar de documentos */
+.tutorial-item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background-color: #e11d48;
+  transition: height 0.3s ease;
+}
+
+.tutorial-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 20px -8px rgba(0, 0, 0, 0.15);
+  border-color: #fecdd3;
+}
+
+.tutorial-item:hover::before {
+  height: 6px;
+}
+
+.tutorial-item strong {
+  color: #0f172a; 
+  font-size: 18px;
+  font-weight: 700;
+  margin-top: 8px;
+  margin-bottom: 12px;
+  display: block;
+  line-height: 1.3;
+}
+
+.tutorial-item p {
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0 0 24px 0;
+  flex-grow: 1; 
+}
+
+/* =========================================
+   BOTÓN VER VIDEO (Enlace)
+   ========================================= */
+.tutorial-actions {
+  margin-top: auto;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 20px;
+}
+
+.btn-video {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  background-color: #f1f5f9;
+  color: #0f172a;
+  text-decoration: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  border: 1px solid #e2e8f0;
+}
+
+.btn-video span {
+  color: #e11d48; /* Play icon en rojo */
+  font-size: 12px;
+}
+
+.btn-video:hover {
+  background-color: #e11d48;
+  color: #ffffff;
+  border-color: #e11d48;
+  box-shadow: 0 4px 6px -1px rgba(225, 29, 72, 0.2);
+}
+
+.btn-video:hover span {
+  color: #ffffff;
+}
+
+/* =========================================
+   MODAL OVERLAY Y FORMULARIO
+   ========================================= */
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(15, 23, 42, 0.7); 
+  backdrop-filter: blur(5px); 
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 999;
+  z-index: 1000;
   padding: 20px;
 }
 
-/* ===== MODAL ===== */
 .form-tutorial {
   background: #ffffff;
   width: 100%;
-  max-width: 520px;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
-  animation: modalIn 0.25s ease-out;
+  max-width: 500px;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+  animation: modalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes modalIn {
   from {
     opacity: 0;
-    transform: translateY(20px) scale(0.97);
+    transform: translateY(20px) scale(0.98);
   }
   to {
     opacity: 1;
@@ -32,113 +226,113 @@
   }
 }
 
-/* ===== HEADER ===== */
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 18px;
+  margin-bottom: 24px;
 }
 
 .modal-header h3 {
   margin: 0;
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
 }
 
 .btn-cancel {
-  background: transparent;
+  background: #f1f5f9;
   border: none;
-  font-size: 20px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  color: #444;
+  color: #64748b;
+  transition: all 0.2s ease;
 }
 
-/* ===== BODY ===== */
+.btn-cancel:hover {
+  background: #fee2e2;
+  color: #ef4444; 
+  transform: rotate(90deg);
+}
+
+/* Campos del Formulario */
 .modal-body {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 20px;
 }
 
 .modal-body label {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
+  color: #475569;
 }
 
 .modal-body input,
 .modal-body textarea {
-  padding: 10px 12px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
   font-size: 14px;
+  color: #1e293b;
+  background: #f8fafc;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.modal-body input:focus,
+.modal-body textarea:focus {
+  outline: none;
+  border-color: #e11d48; 
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.1);
 }
 
 .modal-body textarea {
   resize: vertical;
-  min-height: 90px;
+  min-height: 100px;
 }
 
-/* ===== ACTIONS ===== */
 .modal-actions {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-  margin-top: 22px;
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid #f1f5f9;
 }
 
-.btn-secondary {
-  background: #e5e5e5;
-  color: #000;
-  border: none;
-  padding: 8px 18px;
-  border-radius: 6px;
-  cursor: pointer;
-}
+/* =========================================
+   RESPONSIVE (MÓVILES)
+   ========================================= */
+@media (max-width: 600px) {
+  .page-content {
+    padding: 20px 15px;
+  }
 
-.btn-primary {
-  background: #2ecc71;
-  color: #000;
-  border: none;
-  padding: 8px 22px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-}
+  .lista-tutoriales {
+    grid-template-columns: 1fr; 
+  }
 
-/* ===== LISTADO ===== */
-.tutorial-item {
-  background: #f4f6f7;
-  color: #000;
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 12px;
-}
-
-.tutorial-item strong {
-  display: block;
-  margin-bottom: 4px;
-}
-
-.tutorial-item a {
-  display: inline-block;
-  margin-top: 6px;
-  color: #2980b9;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.empty-text {
-  margin-top: 16px;
-  color: #666;
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 480px) {
   .form-tutorial {
-    padding: 18px;
+    padding: 24px;
+    margin: 10px;
+  }
+  
+  .modal-actions {
+    flex-direction: column-reverse; 
+  }
+  
+  .modal-actions button {
+    width: 100%;
   }
 }

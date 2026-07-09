@@ -15,7 +15,9 @@ const AsignarPasanteModal = ({ postulante, onClose }) => {
     fecha_inicio: '',
     fecha_fin: '',
     modalidad: '',
-    horario: ''
+    horario: '',
+    talla_chamarra: '', // Nuevo
+    numero_credencial: '' 
   });
 
   useEffect(() => {
@@ -111,25 +113,50 @@ const AsignarPasanteModal = ({ postulante, onClose }) => {
 
         <div className="modal-form-group">
           <label>Horario</label>
-          <input
-            type="text"
-            placeholder="Ej. Mañana"
-            value={form.horario}
-            onChange={e =>
-              setForm({ ...form, horario: e.target.value })
-            }
-          />
+          <select 
+            value={form.horario} 
+            onChange={e => setForm({ ...form, horario: e.target.value })}
+          >
+            <option value="">Seleccione Horario</option>
+            <option value="MAÑANA">MAÑANA</option>
+            <option value="TARDE">TARDE</option>
+            <option value="COMPLETO">COMPLETO</option>
+          </select>
         </div>
 
         <div className="modal-form-group">
           <label>Modalidad</label>
+          <select 
+            value={form.modalidad} 
+            onChange={e => setForm({ ...form, modalidad: e.target.value })}
+          >
+            <option value="">Seleccione Modalidad</option>
+            <option value="TRABAJO DIRIGIDO">PASANTIA</option>
+            <option value="PROYECTO DE GRADO">PROYECTO DE GRADO</option>
+            <option value="TRABAJO DIRIGIDO">TRABAJO DIRIGIDO</option>
+            <option value="TRABAJO DIRIGIDO">TESIS</option>
+          </select>
+        </div>
+
+        {/* --- TALLA CHAMARRA --- */}
+        <div className="modal-form-group">
+          <label>Talla de Chamarra</label>
           <input
             type="text"
-            placeholder="Ej. Proyecto de grado"
-            value={form.modalidad}
-            onChange={e =>
-              setForm({ ...form, modalidad: e.target.value })
-            }
+            placeholder="Ej. M, L, XL"
+            value={form.talla_chamarra}
+            onChange={e => setForm({ ...form, talla_chamarra: e.target.value })}
+          />
+        </div>
+
+        {/* --- NÚMERO DE CREDENCIAL --- */}
+        <div className="modal-form-group">
+          <label>Número de Credencial</label>
+          <input
+            type="text"
+            placeholder="Ingrese número de credencial"
+            value={form.numero_credencial}
+            onChange={e => setForm({ ...form, numero_credencial: e.target.value })}
           />
         </div>
 

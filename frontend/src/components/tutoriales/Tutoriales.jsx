@@ -141,20 +141,25 @@ const Tutoriales = () => {
         </>
       )}
 
-      {/* LISTADO */}
-      {lista.length === 0 && (
-        <p className="empty-text">No hay tutoriales disponibles</p>
-      )}
+      {/* LISTADO DE TARJETAS */}
+      <div className="lista-tutoriales">
+        {lista.length === 0 && (
+          <p className="empty-text">No hay tutoriales disponibles en este momento.</p>
+        )}
 
-      {lista.map((t) => (
-        <div key={t.id} className="tutorial-item">
-          <strong>{t.titulo}</strong>
-          {t.descripcion && <p>{t.descripcion}</p>}
-          <a href={t.video_url} target="_blank" rel="noreferrer">
-            Ver video
-          </a>
-        </div>
-      ))}
+        {lista.map((t) => (
+          <div key={t.id} className="tutorial-item">
+            <strong>{t.titulo}</strong>
+            {t.descripcion && <p>{t.descripcion}</p>}
+            
+            <div className="tutorial-actions">
+              <a href={t.video_url} target="_blank" rel="noreferrer" className="btn-video">
+                <span>▶</span> Ver video
+              </a>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

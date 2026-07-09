@@ -37,4 +37,9 @@ router.get(
   documentosController.descargarDocumento
 );
 
+router.delete(
+  '/:tipo',
+  documentosController.eliminarDocumento
+)
+
 module.exports = router;

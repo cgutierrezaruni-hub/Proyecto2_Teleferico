@@ -1,14 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { toast } from 'react-hot-toast';
+import { 
+  LayoutDashboard, User, FileText, Briefcase, Target, 
+  PlaySquare, Users, History, Calendar, Building2, BarChart3, Menu, LogOut 
+} from 'lucide-react';
 import './Layout.css';
 
 const Layout = () => {
   const { usuario, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [sidebarOpen, setSidebarOpen] = React.useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -27,11 +31,11 @@ const Layout = () => {
 
   const getRolColor = (rol) => {
     const colors = {
-      postulante: '#3498db',
-      jefe: '#9b59b6',
-      rrhh: '#2ecc71'
+      postulante: '#3b82f6', // Azul más profesional
+      jefe: '#8b5cf6',       // Morado sobrio
+      rrhh: '#10b981'        // Esmeralda
     };
-    return colors[rol] || '#34495e';
+    return colors[rol] || '#475569';
   };
 
   const isActive = (path) => {
@@ -49,11 +53,11 @@ const Layout = () => {
         <div className="header-container">
           <div className="header-left">
             <button className="menu-toggle" onClick={toggleSidebar}>
-              ☰
+              <Menu size={24} />
             </button>
             <div className="logo-container">
               <div className="logo-text">
-                <h1 className="logo">EETC MI TELEFERICO</h1>
+                <h1 className="logo">EETC MI TELEFÉRICO</h1>
                 <span className="subtitle">Sistema de Pasantías</span>
               </div>
             </div>
@@ -63,7 +67,7 @@ const Layout = () => {
             {usuario && (
               <div className="user-container">
                 <div className="user-avatar">
-                  {usuario.nombre?.charAt(0) || 'U'}
+                  {usuario.nombre?.charAt(0).toUpperCase() || 'U'}
                 </div>
                 <div className="user-info">
                   <span className="user-name">{usuario.nombre}</span>
@@ -75,7 +79,8 @@ const Layout = () => {
                   </span>
                 </div>
                 <button onClick={handleLogout} className="logout-btn">
-                  Salir
+                  <LogOut size={16} />
+                  <span>Salir</span>
                 </button>
               </div>
             )}
@@ -98,91 +103,98 @@ const Layout = () => {
             </div>
             
             <nav className="nav-menu">
-              {/* Postulante */}
+              {/* Rutas de Postulante */}
               {usuario.rol === 'postulante' && (
                 <>
                   <Link to="/dashboard" className={`nav-item ${isActive('/dashboard') ? 'active' : ''}`}>
-                    📊 Dashboard
+                    <LayoutDashboard size={20} className="nav-icon" />
+                    <span className="nav-text">Dashboard</span>
                   </Link>
 
                   <Link to="/mi-perfil" className={`nav-item ${isActive('/mi-perfil') ? 'active' : ''}`}>
-                    👤 Mi Perfil
+                    <User size={20} className="nav-icon" />
+                    <span className="nav-text">Mi Perfil</span>
                   </Link>
 
                   <Link to="/mis-documentos" className={`nav-item ${isActive('/mis-documentos') ? 'active' : ''}`}>
-                    📄 Mis Documentos
+                    <FileText size={20} className="nav-icon" />
+                    <span className="nav-text">Mis Documentos</span>
                   </Link>
 
                   <Link to="/mis-entrevistas" className={`nav-item ${isActive('/mis-entrevistas') ? 'active' : ''}`}>
-                    💼 Mis Entrevistas
+                    <Briefcase size={20} className="nav-icon" />
+                    <span className="nav-text">Mis Entrevistas</span>
                   </Link>
 
-                  {/* 👇 SOLO PASANTE ACTIVO */}
+                  {/* SOLO PASANTE ACTIVO */}
                   {usuario.estado_postulacion === 'ACTIVO' && (
                     <>
+                      <div className="nav-divider"></div>
                       <Link to="/induccion" className={`nav-item ${isActive('/induccion') ? 'active' : ''}`}>
-                        🎯 Inducción
+                        <Target size={20} className="nav-icon" />
+                        <span className="nav-text">Inducción</span>
                       </Link>
 
                       <Link to="/tutoriales" className={`nav-item ${isActive('/tutoriales') ? 'active' : ''}`}>
-                        🎥 Tutoriales
+                        <PlaySquare size={20} className="nav-icon" />
+                        <span className="nav-text">Tutoriales</span>
                       </Link>
                     </>
                   )}
                 </>
               )}
 
-              {/* Jefe */}
+              {/* Rutas de Jefe */}
               {usuario.rol === 'jefe' && (
                 <>
                   <Link to="/dashboard" className={`nav-item ${isActive('/dashboard') ? 'active' : ''}`}>
-                    <span className="nav-icon">📊</span>
+                    <LayoutDashboard size={20} className="nav-icon" />
                     <span className="nav-text">Dashboard</span>
                   </Link>
                   <Link to="/postulantes" className={`nav-item ${isActive('/postulantes') ? 'active' : ''}`}>
-                    <span className="nav-icon">👥</span>
+                    <Users size={20} className="nav-icon" />
                     <span className="nav-text">Postulantes</span>
                   </Link>
                   <Link to="/mis-pasantes" className={`nav-item ${isActive('/mis-pasantes') ? 'active' : ''}`}>
-                    <span className="nav-icon">🎓</span>
+                    <User size={20} className="nav-icon" />
                     <span className="nav-text">Mis Pasantes</span>
                   </Link>
                   <Link to="/historial-entrevistas" className={`nav-item ${isActive('/historial-entrevistas') ? 'active' : ''}`}>
-                    <span className="nav-icon">📋</span>
+                    <History size={20} className="nav-icon" />
                     <span className="nav-text">Historial</span>
                   </Link>
                 </>
               )}
 
-              {/* RRHH */}
+              {/* Rutas de RRHH */}
               {usuario.rol === 'rrhh' && (
                 <>
                   <Link to="/dashboard" className={`nav-item ${isActive('/dashboard') ? 'active' : ''}`}>
-                    <span className="nav-icon">📊</span>
+                    <LayoutDashboard size={20} className="nav-icon" />
                     <span className="nav-text">Dashboard</span>
                   </Link>
                   <Link to="/gestion-postulantes" className={`nav-item ${isActive('/gestion-postulantes') ? 'active' : ''}`}>
-                    <span className="nav-icon">👥</span>
+                    <Users size={20} className="nav-icon" />
                     <span className="nav-text">Postulantes</span>
                   </Link>
                   <Link to="/agenda-entrevistas" className={`nav-item ${isActive('/agenda-entrevistas') ? 'active' : ''}`}>
-                    <span className="nav-icon">📅</span>
+                    <Calendar size={20} className="nav-icon" />
                     <span className="nav-text">Entrevistas</span>
                   </Link>
                   <Link to="/departamentos" className={`nav-item ${isActive('/departamentos') ? 'active' : ''}`}>
-                    <span className="nav-icon">🏢</span>
+                    <Building2 size={20} className="nav-icon" />
                     <span className="nav-text">Departamentos</span>
                   </Link>
                   <Link to="/induccion" className={`nav-item ${isActive('/induccion') ? 'active' : ''}`}>
-                    <span className="nav-icon">🎯</span>
+                    <Target size={20} className="nav-icon" />
                     <span className="nav-text">Inducción</span>
                   </Link>
                   <Link to="/tutoriales" className={`nav-item ${isActive('/tutoriales') ? 'active' : ''}`}>
-                    <span className="nav-icon">🎥</span>
+                    <PlaySquare size={20} className="nav-icon" />
                     <span className="nav-text">Tutoriales</span>
                   </Link>
                   <Link to="/reportes" className={`nav-item ${isActive('/reportes') ? 'active' : ''}`}>
-                    <span className="nav-icon">📈</span>
+                    <BarChart3 size={20} className="nav-icon" />
                     <span className="nav-text">Reportes</span>
                   </Link>
                 </>

@@ -4,19 +4,22 @@ const postulanteController = {
   // Obtener perfil del postulante
   getPerfil: async (req, res) => {
     try {
-      const ci = req.user.ci; // Del middleware auth
+      const ci = req.user.ci; 
       
       const perfil = await postulanteQueries.getPerfil(ci);
-      
+
       if (!perfil) {
-        return res.status(404).json({
-          success: false,
-          error: 'Perfil no encontrado'
+        return res.status(200).json({
+          success: true,
+          existe: false, 
+          perfil: null
         });
       }
       
+      // Si existe, enviamos los datos normalmente
       res.json({
         success: true,
+        existe: true,
         perfil: perfil
       });
       

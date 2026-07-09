@@ -50,7 +50,9 @@ const rrhhController = {
         fecha_inicio,
         fecha_fin,
         horario,
-        modalidad
+        modalidad,
+        talla_chamarra,    // Recibimos del fronted
+        numero_credencial  // Recibimos del frontend
       } = req.body;
 
       // VALIDACIÓN CRÍTICA
@@ -69,7 +71,9 @@ const rrhhController = {
         fecha_inicio,
         fecha_fin,
         horario,
-        modalidad
+        modalidad,
+        talla_chamarra,   // Pasamos a agregar
+        numero_credencial // Pasamos a agregar
       });
 
       res.json({

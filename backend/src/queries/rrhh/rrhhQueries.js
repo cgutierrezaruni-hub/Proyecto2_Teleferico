@@ -11,6 +11,7 @@ const rrhhQueries = {
         u.email,
         p.carrera,
         p.universidad,
+        p.anio_cursando AS semestre, -- <--- Agregamos esto
         p.estado_postulacion
       FROM postulantes p
       JOIN usuarios u ON u.ci = p.usuario_ci
@@ -29,6 +30,7 @@ const rrhhQueries = {
         u.nombre_completo AS nombre_pasante,
         p.carrera,
         p.universidad,
+        p.anio_cursando AS semestre, -- <--- Agregamos esto
         d.nombre_area AS area,
         uj.nombre_completo AS nombre_jefe,
         p.estado_postulacion,
@@ -80,7 +82,9 @@ const rrhhQueries = {
       fecha_inicio,
       fecha_fin,
       horario,
-      modalidad
+      modalidad,
+      talla_chamarra,
+      numero_credencial
     } = data;
 
     // 1. Verificar estado actual
@@ -108,7 +112,7 @@ const rrhhQueries = {
     let pasante;
 
     if (existe.rowCount > 0) {
-      // 🔁 UPDATE (re-asignación)
+      // UPDATE (re-asignación)
       const updateQuery = `
         UPDATE pasantes_contratados
         SET departamento_id = $2,
@@ -117,7 +121,9 @@ const rrhhQueries = {
             fecha_inicio = $5,
             fecha_fin = $6,
             horario = $7,
-            modalidad = $8
+            modalidad = $8,
+            talla_chamarra = $9,
+            numero_credencial = $10
         WHERE usuario_ci = $1
         RETURNING *
       `;
@@ -130,7 +136,9 @@ const rrhhQueries = {
         fecha_inicio,
         fecha_fin,
         horario || null,
-        modalidad || null
+        modalidad || null,
+        talla_chamarra || null, 
+        numero_credencial || null 
       ]);
 
       pasante = rows[0];
@@ -145,8 +153,10 @@ const rrhhQueries = {
           fecha_inicio,
           fecha_fin,
           horario,
-          modalidad
-        ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+          modalidad,
+          talla_chamarra, 
+          numero_credencial
+        ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
         RETURNING *
       `;
 
@@ -158,7 +168,9 @@ const rrhhQueries = {
         fecha_inicio,
         fecha_fin,
         horario || null,
-        modalidad || null
+        modalidad || null,
+        talla_chamarra || null, 
+        numero_credencial || null
       ]);
 
       pasante = rows[0];

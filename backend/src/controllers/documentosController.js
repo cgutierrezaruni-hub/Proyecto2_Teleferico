@@ -209,6 +209,72 @@ const documentosController = {
     }
   },
 
+  eliminarDocumento: async (req, res) => {
+    try {
+      const ci = req.user.ci;
+      const { tipo } = req.params;
+
+      // 1. Validar que el tipo sea permitido
+      if (!tipo || !TIPOS_DOCUMENTO_PERMITIDOS.includes(tipo)) {
+        return res.status(400).json({
+          success: false,
+          error: 'Tipo de documento no válido'
+        });
+      }
+
+      // 2. Verificar si ya confirmó envío (no se puede borrar si ya confirmó)
+      const confirmacion = await pool.query(
+        `SELECT 1 FROM documentos_postulante WHERE postulante_ci = $1 AND tipo = 'ENVIO_CONFIRMADO'`,
+        [ci]
+      );
+
+      if (confirmacion.rows.length > 0) {
+        return res.status(403).json({
+          success: false,
+          error: 'No puede eliminar documentos porque su expediente ya fue enviado.'
+        });
+      }
+
+      // 3. Buscar el documento para obtener su ruta y borrarlo del disco
+      const resultDoc = await pool.query(
+        `SELECT archivo_ruta FROM documentos_postulante WHERE postulante_ci = $1 AND tipo = $2`,
+        [ci, tipo]
+      );
+
+      if (resultDoc.rows.length === 0) {
+        return res.status(404).json({
+          success: false,
+          error: 'El documento no existe.'
+        });
+      }
+
+      const rutaArchivo = resultDoc.rows[0].archivo_ruta;
+
+      // 4. Borrar el archivo físico del servidor (si existe)
+      if (fs.existsSync(rutaArchivo)) {
+        fs.unlinkSync(rutaArchivo);
+      }
+
+      // 5. Eliminar el registro de la base de datos
+      await pool.query(
+        `DELETE FROM documentos_postulante WHERE postulante_ci = $1 AND tipo = $2`,
+        [ci, tipo]
+      );
+
+      res.json({
+        success: true,
+        message: 'Documento eliminado correctamente'
+      });
+
+    } catch (error) {
+      console.error('Error eliminando documento:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Error interno al eliminar documento'
+      });
+    }
+  },
+
 };
 
 module.exports = documentosController;

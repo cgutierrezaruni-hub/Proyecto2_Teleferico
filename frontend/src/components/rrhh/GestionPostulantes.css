@@ -222,3 +222,93 @@
     text-align: center;
   }
 }
+
+
+/* 1. Contenedor principal: Pestañas a la izquierda, Buscador a la derecha */
+.rrhh-filtros-container {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+  width: 100%;
+  margin-bottom: 25px;
+  box-sizing: border-box;
+}
+
+/* 2. Grupo de botones de las pestañas */
+.rrhh-tabs {
+  display: flex;
+  gap: 10px;
+}
+
+/* 3. El Buscador estilo "Píldora" (idéntico a tu foto) */
+.buscador-compacto {
+  margin-left: auto; /* Fuerza la posición al extremo derecho */
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  border: 1px solid #cfcfcf; /* Gris suave de tus botones */
+  border-radius: 20px; /* Forma ovalada */
+  padding: 6px 15px;
+  width: 220px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Sombra sutil */
+  transition: all 0.2s ease;
+}
+
+/* Efecto de enfoque: borde negro para combinar con tus botones activos */
+.buscador-compacto:focus-within {
+  border-color: #000000;
+  width: 280px; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Input interno sin bordes */
+.buscador-compacto input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 14px;
+  margin-left: 8px;
+  width: 100%;
+  color: #000000;
+}
+
+/* Color del texto de ayuda (placeholder) */
+.buscador-compacto input::placeholder {
+  color: #adb5bd;
+}
+
+/* Icono de la lupa */
+.lupa-minimal {
+  font-size: 14px;
+  color: #6c757d;
+}
+
+/* Botón de limpiar (X) */
+.clear-btn {
+  background: none;
+  border: none;
+  color: #adb5bd;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 0;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+}
+
+.clear-btn:hover {
+  color: #dc3545; /* Rojo suave al pasar el mouse para borrar */
+}
+
+/*PARA EL SEMESTRE*/
+.badge-semestre {
+  background-color: #f1f3f5;
+  color: #495057;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid #dee2e6;
+  display: inline-block;
+  white-space: nowrap;
+}

@@ -89,15 +89,14 @@ const MiPerfil = () => {
     try {
       setCargando(true);
       
-      // Verificar si el perfil está completo
-      const verificacion = await verificarPerfilCompleto();
-      setPerfilCompleto(verificacion.completo);
-      
-      // Cargar datos del perfil
+      // 1. Cargamos el perfil (el controlador ahora devuelve "existe")
       const response = await getPerfilPostulante();
       
-      if (response.success && response.perfil) {
-        // Formatear datos para los inputs
+      // 2. Si el perfil ya existe en la base de datos
+      if (response.success && response.existe) {
+        // Bloqueamos el formulario para que no se pueda editar más
+        setPerfilCompleto(true); 
+        
         const datos = response.perfil;
         const datosFormateados = {
           fecha_nacimiento: '',
@@ -117,7 +116,6 @@ const MiPerfil = () => {
         // Copiar todos los campos del perfil obtenido
         Object.keys(datosFormateados).forEach(key => {
           if (datos[key] !== undefined && datos[key] !== null) {
-     
             if (key === 'fecha_nacimiento' && datos[key]) {
               const fecha = new Date(datos[key]);
               datosFormateados[key] = fecha.toISOString().split('T')[0];
@@ -127,31 +125,32 @@ const MiPerfil = () => {
           }
         });
         
-        // Verificar si necesita mostrar "otra universidad"
+        // Manejo de "Otra Universidad"
         if (datosFormateados.universidad && !universidades.includes(datosFormateados.universidad) && datosFormateados.universidad !== '') {
           setMostrarOtraUniversidad(true);
-          // Guardar el valor actual en "otra_universidad"
           datosFormateados.otra_universidad = datosFormateados.universidad;
           datosFormateados.universidad = 'Otro';
         }
 
-        // Verificar si necesita mostrar "otra carrera"
+        // Manejo de "Otra Carrera"
         if (datosFormateados.carrera && !carreras.includes(datosFormateados.carrera) && datosFormateados.carrera !== '') {
           setMostrarOtraCarrera(true);
-          // Guardar el valor actual en "otra_carrera"
           datosFormateados.otra_carrera = datosFormateados.carrera;
           datosFormateados.carrera = 'Otro';
         }
         
         setPerfil(datosFormateados);
+      } else {
+        // Si NO existe (usuario nuevo), nos aseguramos de que pueda editar
+        setPerfilCompleto(false);
       }
     } catch (error) {
-      console.error('Error cargando perfil:', error);
-      toast.error('Error al cargar el perfil');
+      // Si hay un error real (conexión), lo logueamos, pero no alarmamos al usuario nuevo
+      console.log('Aviso: Perfil pendiente de creación o error de red');
     } finally {
       setCargando(false);
     }
-  }, [universidades, carreras]); 
+  }, [universidades, carreras]);
 
   useEffect(() => {
     cargarPerfil();
@@ -284,6 +283,7 @@ const MiPerfil = () => {
                 name="fecha_nacimiento"
                 value={perfil.fecha_nacimiento}
                 onChange={handleChange}
+                disabled={perfilCompleto}
                 required
               />
             </div>
@@ -294,6 +294,7 @@ const MiPerfil = () => {
                 name="genero"
                 value={perfil.genero}
                 onChange={handleChange}
+                disabled={perfilCompleto}
                 required
               >
                 <option value="">Seleccionar</option>
@@ -325,6 +326,7 @@ const MiPerfil = () => {
                   name="tiene_hijos"
                   checked={perfil.tiene_hijos}
                   onChange={handleChange}
+                  disabled={perfilCompleto}
                 />
                 ¿Tiene hijos?
               </label>
@@ -341,6 +343,7 @@ const MiPerfil = () => {
                 name="universidad"
                 value={perfil.universidad}
                 onChange={handleChange}
+                disabled={perfilCompleto}
                 required
               >
                 <option value="">Seleccionar una universidad</option>
@@ -426,11 +429,12 @@ const MiPerfil = () => {
                 name="horas_acumular"
                 value={perfil.horas_acumular}
                 onChange={handleChange}
+                disabled={perfilCompleto}
                 placeholder="Ej: 480"
                 min="0"
                 required
               />
-              <small className="helper-text">Horas requeridas por la universidad</small>
+              <small className="helper-text">Horas requeridas por la Universidad/Instituto</small>
             </div>
           </div>
 
@@ -469,14 +473,18 @@ const MiPerfil = () => {
         <div className="form-actions">
           <button 
             type="submit" 
-            className="btn-primary"
-            disabled={guardando}
+            className={perfilCompleto ? "btn-disabled" : "btn-primary"} 
+            disabled={guardando || perfilCompleto}
           >
             {guardando ? (
               <>
                 <span className="spinner"></span> Guardando...
               </>
-            ) : perfilCompleto ? 'Actualizar Perfil' : 'Guardar y Continuar'}
+            ) : perfilCompleto ? (
+              'Información Oficial Enviada'
+            ) : (
+              'Confirmar y Enviar Postulación'
+            )}
           </button>
           
           <button 
@@ -484,7 +492,7 @@ const MiPerfil = () => {
             className="btn-secondary"
             onClick={() => navigate('/dashboard')}
           >
-            Cancelar
+            {perfilCompleto ? 'Volver al Inicio' : 'Cancelar'}
           </button>
         </div>
       </form>

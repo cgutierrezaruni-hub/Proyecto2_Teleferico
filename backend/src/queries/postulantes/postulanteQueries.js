@@ -61,63 +61,37 @@ const postulanteQueries = {
     }
   },
 
-  // 5. Crear o actualizar perfil (UPSERT) (NUEVA)
+  // 5. Crear perfil (Solo permite una vez)
   upsertPerfil: async (postulanteData) => {
     try {
       const {
-        usuario_ci,
-        fecha_nacimiento,
-        genero,
-        estado_civil,
-        tiene_hijos,
-        universidad,
-        carrera,
-        anio_cursando,
-        horas_acumular,
-        numero_celular,
-        cuenta_seguro
+        usuario_ci, fecha_nacimiento, genero, estado_civil, tiene_hijos,
+        universidad, carrera, anio_cursando, horas_acumular, numero_celular, cuenta_seguro
       } = postulanteData;
 
       const query = `
         INSERT INTO postulantes (
           usuario_ci, fecha_nacimiento, genero, estado_civil,
           tiene_hijos, universidad, carrera, anio_cursando,
-          horas_acumular, numero_celular, cuenta_seguro
+          horas_acumular, numero_celular, cuenta_seguro, estado_postulacion
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'ENVIADO')
         ON CONFLICT (usuario_ci) 
-        DO UPDATE SET
-          fecha_nacimiento = $2,
-          genero = $3,
-          estado_civil = $4,
-          tiene_hijos = $5,
-          universidad = $6,
-          carrera = $7,
-          anio_cursando = $8,
-          horas_acumular = $9,
-          numero_celular = $10,
-          cuenta_seguro = $11,
-          estado_postulacion = 'completando_perfil'
-        RETURNING *
+        DO NOTHING -- <--- ESTA ES LA CLAVE: No permite actualizar si ya existe
+        RETURNING *;
       `;
 
       const result = await pool.query(query, [
-        usuario_ci,
-        fecha_nacimiento || null,
-        genero || null,
-        estado_civil || null,
-        tiene_hijos || false,
-        universidad || null,
-        carrera || null,
-        anio_cursando || null,
-        horas_acumular || null,
-        numero_celular || null,
-        cuenta_seguro || false
+        usuario_ci, fecha_nacimiento, genero, estado_civil,
+        tiene_hijos, universidad, carrera, anio_cursando,
+        horas_acumular, numero_celular, cuenta_seguro
       ]);
 
+      // Si result.rows[0] es undefined, significa que el perfil ya existía
       return result.rows[0];
+
     } catch (error) {
-      console.error('Error actualizando perfil:', error);
+      console.error('Error en upsertPerfil:', error);
       throw error;
     }
   },
